@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-dbb-black text-dbb-cream font-body antialiased;
+  }
+  ::selection {
+    @apply bg-dbb-cream text-dbb-black;
+  }
+  /* Minimal scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-dbb-black;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-dbb-border;
+  }
+}
+
+@layer components {
+  /* Section eyebrow label */
+  .section-label {
+    @apply font-body text-xs tracking-[0.3em] uppercase text-dbb-muted mb-4;
+  }
+
+  /* Primary button — white on black */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 bg-dbb-cream text-dbb-black font-body text-sm
+           font-semibold tracking-[0.15em] uppercase px-8 py-4
+           transition-all duration-300 hover:bg-dbb-ash;
+  }
+
+  /* Outline button */
+  .btn-outline {
+    @apply inline-flex items-center gap-2 border border-dbb-border text-dbb-cream
+           font-body text-sm font-medium tracking-[0.15em] uppercase px-8 py-4
+           transition-all duration-300 hover:border-dbb-cream;
+  }
+
+  /* Admin form controls */
+  .admin-label {
+    @apply block font-body text-[11px] tracking-[0.2em] uppercase text-dbb-ash mb-2;
+  }
+  .admin-input {
+    @apply w-full bg-dbb-black border border-dbb-border text-dbb-cream font-body
+           text-sm px-4 py-3 focus:outline-none focus:border-dbb-cream
+           transition-colors placeholder:text-dbb-muted;
+  }
+
+  /* Product card hover wrapper */
+  .product-card {
+    @apply transition-opacity duration-300;
+  }
+
+  /* Nav link */
+  .nav-link {
+    @apply font-body text-xs tracking-[0.2em] uppercase text-dbb-ash
+           hover:text-dbb-cream transition-colors duration-200;
+  }
+}
