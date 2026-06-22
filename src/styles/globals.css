@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-bebas: 'Bebas Neue', Impact, sans-serif;
+  --font-inter: 'Inter', system-ui, sans-serif;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #0A0A0A;
+    color: #F0EDE8;
+    font-family: var(--font-inter);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: #C8FF00;
+    color: #0A0A0A;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: #0A0A0A; }
+  ::-webkit-scrollbar-thumb { background: #C8FF00; }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center gap-2 bg-dbb-acid text-dbb-black font-display text-xl tracking-widest px-8 py-4 uppercase transition-all duration-200 hover:bg-dbb-cream hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center gap-2 border border-dbb-cream text-dbb-cream font-display text-xl tracking-widest px-8 py-4 uppercase transition-all duration-200 hover:bg-dbb-cream hover:text-dbb-black active:scale-[0.98];
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 text-dbb-ash font-body text-sm tracking-widest uppercase transition-colors duration-200 hover:text-dbb-cream;
+  }
+
+  .section-label {
+    @apply font-body text-xs tracking-[0.3em] uppercase text-dbb-acid mb-4;
+  }
+
+  .product-card {
+    @apply relative overflow-hidden bg-dbb-charcoal cursor-pointer;
+  }
+
+  .admin-input {
+    @apply w-full bg-dbb-charcoal border border-dbb-smoke text-dbb-cream px-4 py-3 text-sm font-body focus:outline-none focus:border-dbb-acid transition-colors placeholder:text-dbb-ash;
+  }
+
+  .admin-label {
+    @apply block text-xs tracking-widest uppercase text-dbb-ash mb-2;
+  }
+}
+
+/* Ticker tape */
+.ticker-wrap {
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ticker-inner {
+  display: inline-flex;
+  animation: ticker 25s linear infinite;
+}
+.ticker-inner:hover {
+  animation-play-state: paused;
+}
+
+/* Video hero diagonal split */
+.hero-split::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, rgba(10,10,10,0.85) 50%, rgba(10,10,10,0.2) 100%);
+  pointer-events: none;
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
