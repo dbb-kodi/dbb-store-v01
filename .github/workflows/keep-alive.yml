@@ -1,0 +1,31 @@
+name: Supabase Keep-Alive
+
+# Pings the deployed /api/keep-alive endpoint so the Supabase free-tier
+# project never sits idle for 7 days and gets paused.
+#
+# Required GitHub repo settings (Settings → Secrets and variables → Actions):
+#   - Variable  KEEP_ALIVE_URL  e.g. https://your-domain.com/api/keep-alive
+#   - Secret    CRON_SECRET     same value as the CRON_SECRET env var on the host
+on:
+  schedule:
+    # Daily at 12:00 UTC. GitHub may delay scheduled runs, so daily gives
+    # plenty of margin under Supabase's 7-day pause window.
+    - cron: '0 12 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping keep-alive endpoint
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          KEEP_ALIVE_URL: ${{ vars.KEEP_ALIVE_URL }}
+        run: |
+          if [ -z "${KEEP_ALIVE_URL}" ]; then
+            echo "KEEP_ALIVE_URL repo variable is not set — skipping."
+            exit 0
+          fi
+          curl --fail --silent --show-error \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            "${KEEP_ALIVE_URL}"
