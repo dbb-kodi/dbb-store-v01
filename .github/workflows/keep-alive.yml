@@ -6,7 +6,7 @@ name: Supabase Keep-Alive
 # Required GitHub repo settings (Settings → Secrets and variables → Actions):
 #   - Variable  KEEP_ALIVE_URL  e.g. https://your-domain.com/api/keep-alive
 #   - Secret    CRON_SECRET     same value as the CRON_SECRET env var on the host
-on:
+'on':
   schedule:
     # Daily at 12:00 UTC. GitHub may delay scheduled runs, so daily gives
     # plenty of margin under Supabase's 7-day pause window.
