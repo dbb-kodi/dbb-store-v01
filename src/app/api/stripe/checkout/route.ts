@@ -31,15 +31,10 @@ export async function POST(request: NextRequest) {
           0
         )
 
-        // Insert with the service-role client: guests have no direct write
-        // path to orders/order_items (no RLS insert policy on order_items),
-        // so the pending order + its line items must be created server-side.
-        const supabaseAdmin = createAdminClient()
-        if (!supabaseAdmin) {
-          throw new Error('Supabase admin client not configured; cannot persist order.')
-        }
-
-        const { data: order, error: orderError } = await supabaseAdmin
+        // The "orders_insert_own_or_guest" RLS policy already permits this
+        // insert (auth.uid() = user_id, or user_id is null for guests), so
+        // use the session client here instead of the service-role client.
+        const { data: order, error: orderError } = await supabase
           .from('orders')
           .insert({
             user_id: user?.id ?? null,
@@ -51,6 +46,15 @@ export async function POST(request: NextRequest) {
           })
           .select()
           .single()
+
+        // order_items has no guest insert policy (see 0003_orders_cart_newsletter.sql):
+        // an unconditional guest-insert policy would let any anonymous client
+        // append arbitrary rows to any order whose id it learns. The
+        // service-role client is still required for this insert only.
+        const supabaseAdmin = createAdminClient()
+        if (!supabaseAdmin) {
+          throw new Error('Supabase admin client not configured; cannot persist order items.')
+        }
 
         if (orderError) {
           console.error('Order insert error:', orderError)

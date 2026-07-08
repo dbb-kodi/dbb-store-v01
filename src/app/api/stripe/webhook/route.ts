@@ -9,6 +9,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ received: true })
   }
 
+  let event: import('stripe').default.Event
   try {
     const body = await request.text()
     const signature = request.headers.get('stripe-signature')
@@ -16,8 +17,13 @@ export async function POST(request: NextRequest) {
 
     const Stripe = (await import('stripe')).default
     const stripe = new Stripe(stripeKey, { apiVersion: '2024-06-20' })
-    const event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
+    event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
+  } catch (err) {
+    console.error('Webhook signature verification failed:', err)
+    return NextResponse.json({ error: 'Webhook failed' }, { status: 400 })
+  }
 
+  try {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as import('stripe').default.Checkout.Session
       const orderId = session.metadata?.order_id
@@ -80,7 +86,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ received: true })
   } catch (err) {
-    console.error('Webhook error:', err)
-    return NextResponse.json({ error: 'Webhook failed' }, { status: 400 })
+    // Signature is already verified at this point, so an unexpected error here
+    // (e.g. a Supabase client exception) should not trigger Stripe retries.
+    console.error('Webhook handling error:', err)
+    return NextResponse.json({ received: true })
   }
 }
