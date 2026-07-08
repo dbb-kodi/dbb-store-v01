@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls src/lib/supabase)",
+      "Bash(find src/lib -iname \"*supabase*\")",
+      "Skill(deep-research)",
+      "Skill(deep-research:*)"
+    ]
+  }
+}

@@ -1,6 +1,7 @@
 // src/components/layout/Footer.tsx
 import Link from 'next/link'
 import { Instagram } from 'lucide-react'
+import { NewsletterForm } from '@/components/layout/NewsletterForm'
 
 const shopLinks = [
   { href: '/shop', label: 'All Products' },
@@ -19,7 +20,7 @@ export function Footer() {
   return (
     <footer className="bg-dbb-black border-t border-dbb-border">
       <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-12">
           <div className="md:col-span-2">
             <span className="font-display text-4xl tracking-[0.2em] text-dbb-cream">DBB</span>
             <p className="font-body text-sm text-dbb-muted mt-3 max-w-xs leading-relaxed">
@@ -47,6 +48,11 @@ export function Footer() {
                 </li>
               ))}
             </ul>
+          </div>
+
+          <div>
+            <p className="section-label">Stay Updated</p>
+            <NewsletterForm />
           </div>
         </div>
 

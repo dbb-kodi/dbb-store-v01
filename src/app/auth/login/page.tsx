@@ -1,9 +1,14 @@
 // src/app/auth/login/page.tsx
 import Link from 'next/link'
+import { signIn } from '../actions'
 
 export const metadata = { title: 'Login — DBB' }
 
-export default function LoginPage() {
+export default function LoginPage({
+  searchParams,
+}: {
+  searchParams?: { error?: string; message?: string }
+}) {
   return (
     <main className="min-h-screen flex items-center justify-center px-6">
       <div className="w-full max-w-sm">
@@ -16,14 +21,21 @@ export default function LoginPage() {
           SIGN IN
         </h1>
 
-        <form className="flex flex-col gap-5">
+        {searchParams?.error && (
+          <p className="font-body text-sm text-red-400 text-center mb-4">{searchParams.error}</p>
+        )}
+        {searchParams?.message && (
+          <p className="font-body text-sm text-dbb-muted text-center mb-4">{searchParams.message}</p>
+        )}
+
+        <form action={signIn} className="flex flex-col gap-5">
           <div>
             <label className="admin-label">Email</label>
-            <input type="email" placeholder="your@email.com" className="admin-input" />
+            <input type="email" name="email" placeholder="your@email.com" className="admin-input" />
           </div>
           <div>
             <label className="admin-label">Password</label>
-            <input type="password" placeholder="••••••••" className="admin-input" />
+            <input type="password" name="password" placeholder="••••••••" className="admin-input" />
           </div>
           <button type="submit" className="btn-primary w-full justify-center mt-2">
             SIGN IN

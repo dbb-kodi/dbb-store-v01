@@ -4,6 +4,7 @@ import { Bebas_Neue, Inter } from 'next/font/google'
 import { Toaster } from 'react-hot-toast'
 import { Navbar } from '@/components/layout/Navbar'
 import { CartDrawer } from '@/components/layout/CartDrawer'
+import CartSync from '@/components/CartSync'
 import '@/styles/globals.css'
 
 const display = Bebas_Neue({
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-dbb-black text-dbb-cream min-h-screen">
         <Navbar />
         <CartDrawer />
+        <CartSync />
         {children}
         <Toaster
           position="bottom-right"

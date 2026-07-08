@@ -1,5 +1,6 @@
 // src/app/api/stripe/checkout/route.ts
 import { NextResponse, type NextRequest } from 'next/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 
 export async function POST(request: NextRequest) {
   const stripeKey = process.env.STRIPE_SECRET_KEY
@@ -11,11 +12,71 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { items } = await request.json()
+    const { items, guestEmail } = await request.json()
     const Stripe = (await import('stripe')).default
     const stripe = new Stripe(stripeKey, { apiVersion: '2024-06-20' })
 
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+
+    let orderId: string | null = null
+    const supabase = createClient()
+    if (supabase) {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+
+        const subtotal = items.reduce(
+          (sum: number, item: { price: number; quantity: number }) => sum + item.price * item.quantity,
+          0
+        )
+
+        // Insert with the service-role client: guests have no direct write
+        // path to orders/order_items (no RLS insert policy on order_items),
+        // so the pending order + its line items must be created server-side.
+        const supabaseAdmin = createAdminClient()
+        if (!supabaseAdmin) {
+          throw new Error('Supabase admin client not configured; cannot persist order.')
+        }
+
+        const { data: order, error: orderError } = await supabaseAdmin
+          .from('orders')
+          .insert({
+            user_id: user?.id ?? null,
+            guest_email: user ? null : (guestEmail ?? null),
+            status: 'pending',
+            subtotal,
+            shipping_cost: 0,
+            total: subtotal,
+          })
+          .select()
+          .single()
+
+        if (orderError) {
+          console.error('Order insert error:', orderError)
+        } else if (order) {
+          orderId = order.id
+
+          const { error: itemsError } = await supabaseAdmin.from('order_items').insert(
+            items.map((item: { variantId: string; productId: string; quantity: number; price: number }) => ({
+              order_id: order.id,
+              variant_id: item.variantId,
+              product_id: item.productId,
+              quantity: item.quantity,
+              unit_price: item.price,
+            }))
+          )
+
+          if (itemsError) {
+            console.error('Order items insert error:', itemsError)
+          }
+        }
+      } catch (persistErr) {
+        console.error('Order persistence error:', persistErr)
+      }
+    } else {
+      console.error('Supabase not configured; skipping order persistence.')
+    }
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -33,6 +94,11 @@ export async function POST(request: NextRequest) {
       })),
       success_url: `${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl}/checkout/cancel`,
+      // Expire abandoned checkout sessions after 24h; the webhook's
+      // checkout.session.expired handler marks the matching pending order
+      // cancelled so unpaid orders don't accumulate in admin/order lists.
+      expires_at: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
+      ...(orderId ? { metadata: { order_id: orderId } } : {}),
     })
 
     return NextResponse.json({ url: session.url })
