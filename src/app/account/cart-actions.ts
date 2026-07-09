@@ -16,10 +16,17 @@ export async function getSavedCart(): Promise<CartItem[]> {
 
   if (error || !data) return []
   const items = (data.items as CartItem[]) ?? []
-  // Carts saved before maxQty existed have no cap on this field. Treat an
-  // absent cap as "unknown, don't clamp" rather than letting it become NaN
-  // the first time addItem/updateQuantity runs Math.min against it.
-  return items.map((item) => ({ ...item, maxQty: item.maxQty ?? Infinity }))
+  return items.map((item) => ({
+    ...item,
+    // Carts saved before maxQty existed have no cap on this field. Treat an
+    // absent cap as "unknown, don't clamp" rather than letting it become NaN
+    // the first time addItem/updateQuantity runs Math.min against it.
+    maxQty: item.maxQty ?? Infinity,
+    // imageUrl was snapshotted at add-time, so carts saved before the
+    // infringing product images were purged still carry those URLs. Blanking
+    // the products table never reached rows already written to `carts`.
+    imageUrl: item.imageUrl?.startsWith('https://images.unsplash.com/') ? null : item.imageUrl,
+  }))
 }
 
 export async function saveCart(items: CartItem[]): Promise<{ error?: string }> {

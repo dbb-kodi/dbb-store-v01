@@ -10,7 +10,9 @@ export async function FeaturedProducts() {
     <section className="py-24 px-6 max-w-7xl mx-auto">
       <div className="flex items-end justify-between mb-12">
         <div>
-          <p className="section-label">New Drops</p>
+          {/* "New Drops" sat here. Nothing drops — the drops subsystem is
+              deferred, and this rail is the static featured set. An eyebrow
+              that makes a false claim is worse than no eyebrow. */}
           <h2 className="font-display text-[clamp(2rem,5vw,4rem)] tracking-[0.04em] text-dbb-cream">
             FEATURED
           </h2>

@@ -128,13 +128,19 @@
 @layer components {
   /* Scroll reveal. Transition (not keyframes) so a fast scroll back up can
      retarget mid-flight instead of restarting from zero. 8px, not 40px —
-     the movement should register subconsciously, not announce itself. */
-  .reveal {
+     the movement should register subconsciously, not announce itself.
+
+     Gated behind .js on <html>: the hidden state only exists once we know
+     JavaScript is running to un-hide it. Without this, a failed or blocked
+     script leaves every section below the fold at opacity 0 forever — the
+     page renders as a hero followed by nothing. Animation is an enhancement;
+     it must never be load-bearing for content. */
+  .js .reveal {
     opacity: 0;
     transform: translateY(8px);
     transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
   }
-  .reveal[data-visible='true'] {
+  .js .reveal[data-visible='true'] {
     opacity: 1;
     transform: translateY(0);
   }
@@ -147,11 +153,11 @@
 
   /* Reduced motion means gentler, not none. Keep the opacity fade — it still
      communicates "this just arrived" — and drop only the movement. */
-  .reveal {
+  .js .reveal {
     transform: none;
     transition: opacity 200ms ease;
   }
-  .reveal[data-visible='true'] {
+  .js .reveal[data-visible='true'] {
     transform: none;
   }
 

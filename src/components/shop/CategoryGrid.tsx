@@ -6,7 +6,6 @@ import { CATEGORIES } from '@/lib/data/catalog'
 export function CategoryGrid() {
   return (
     <section className="py-24 px-6 max-w-7xl mx-auto">
-      <p className="section-label text-center">Collections</p>
       <h2 className="font-display text-display-md text-center text-dbb-cream mb-16">
         SHOP BY CATEGORY
       </h2>

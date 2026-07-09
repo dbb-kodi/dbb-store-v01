@@ -16,7 +16,6 @@ export async function CommunitySection() {
     <section className="py-24 px-6 max-w-7xl mx-auto">
       <div className="flex items-end justify-between mb-12">
         <div>
-          <p className="section-label">The Movement</p>
           <h2 className="font-display text-[clamp(2rem,5vw,4rem)] tracking-[0.04em] text-dbb-cream">
             COMMUNITY
           </h2>

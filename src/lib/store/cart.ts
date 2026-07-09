@@ -84,20 +84,36 @@ export const useCart = create<CartState>()(
     }),
     {
       name: 'dbb-cart',
-      version: 1,
-      // v0 carts (persisted before maxQty existed) hydrate with maxQty
-      // undefined on every item. Every cap check downstream does
-      // Math.min(n, item.maxQty), which silently becomes NaN the first
-      // time quantity is touched — corrupting quantity and therefore
-      // subtotal. Treat a missing cap as "unknown, don't clamp" rather
-      // than let it become NaN, same fix as cart-actions.ts getSavedCart.
+      version: 2,
       migrate: (persisted: any, version) => {
+        // v0 -> v1. Carts persisted before maxQty existed hydrate with maxQty
+        // undefined on every item. Every cap check downstream does
+        // Math.min(n, item.maxQty), which silently becomes NaN the first time
+        // quantity is touched — corrupting quantity and therefore subtotal.
+        // Treat a missing cap as "unknown, don't clamp" rather than let it
+        // become NaN, same fix as cart-actions.ts getSavedCart.
         if (version < 1 && persisted?.items) {
           persisted.items = persisted.items.map((item: CartItem) => ({
             ...item,
             maxQty: item.maxQty ?? Infinity,
           }))
         }
+
+        // v1 -> v2. imageUrl is snapshotted onto the cart item at add-time and
+        // persisted, so a cart created before the infringing product images
+        // were purged still carries those URLs — and renders them in the
+        // drawer, and forwards them to Stripe as line-item images. Blanking the
+        // database never reached client storage. Drop the snapshot; the drawer
+        // falls back to the DBB monogram tile when imageUrl is null.
+        if (version < 2 && persisted?.items) {
+          persisted.items = persisted.items.map((item: CartItem) => ({
+            ...item,
+            imageUrl: item.imageUrl?.startsWith('https://images.unsplash.com/')
+              ? null
+              : item.imageUrl,
+          }))
+        }
+
         return persisted
       },
     }

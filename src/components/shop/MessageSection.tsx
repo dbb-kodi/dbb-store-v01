@@ -6,7 +6,8 @@ export function MessageSection({ quote = DEFAULT_QUOTE }: { quote?: string }) {
   return (
     <section className="py-32 px-6 bg-dbb-surface">
       <div className="max-w-4xl mx-auto text-center">
-        <p className="section-label justify-center flex">The Philosophy</p>
+        {/* The quote announces itself. Labelling it "The Philosophy" first is
+            the interface explaining its own joke. */}
         <blockquote className="font-display text-[clamp(2rem,7vw,6rem)] leading-[0.95] tracking-[0.02em] text-dbb-cream">
           &ldquo;{quote}&rdquo;
         </blockquote>

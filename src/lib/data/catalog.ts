@@ -98,12 +98,15 @@ export function getRelatedProducts(slug: string, category: Category): Product[] 
 }
 
 // Hoodies / Headwear / Accessories reused the watermarked, KASIDEEP, and CDC
-// biohazard frames respectively — blanked with the rest.
+// biohazard frames respectively — blanked with the rest, and Tees followed in
+// 0009. The placeholder text is empty: CategoryGrid already renders the label
+// over the tile, and a text-bearing placeholder underneath printed every
+// category name twice.
 export const CATEGORIES: Array<{ key: Category; label: string; image: string }> = [
-  { key: 'hoodies',     label: 'Hoodies',     image: img('HOODIES', 600, 800) },
-  { key: 'tees',        label: 'Tees',        image: img('TEES', 600, 800) },
-  { key: 'headwear',    label: 'Headwear',    image: img('HEADWEAR', 600, 800) },
-  { key: 'accessories', label: 'Accessories', image: img('ACCESSORIES', 600, 800) },
+  { key: 'hoodies',     label: 'Hoodies',     image: img('', 600, 800) },
+  { key: 'tees',        label: 'Tees',        image: img('', 600, 800) },
+  { key: 'headwear',    label: 'Headwear',    image: img('', 600, 800) },
+  { key: 'accessories', label: 'Accessories', image: img('', 600, 800) },
 ]
 
 export const COMMUNITY_POSTS: CommunityPost[] = Array.from({ length: 9 }).map((_, i) => ({
