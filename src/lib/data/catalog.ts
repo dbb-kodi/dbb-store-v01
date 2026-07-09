@@ -87,7 +87,12 @@ export function getProductBySlug(slug: string): Product | undefined {
 }
 
 export function getRelatedProducts(slug: string, category: Category): Product[] {
-  return PRODUCTS.filter((p) => p.active && p.slug !== slug && p.category === category).slice(0, 4)
+  const sameCategory = PRODUCTS.filter((p) => p.active && p.slug !== slug && p.category === category)
+  if (sameCategory.length >= 4) return sameCategory.slice(0, 4)
+  // Thin category — top up from other active products rather than rendering
+  // a rail with empty grid columns.
+  const rest = PRODUCTS.filter((p) => p.active && p.slug !== slug && p.category !== category)
+  return [...sameCategory, ...rest].slice(0, 4)
 }
 
 // Hoodies / Headwear / Accessories reused the watermarked, KASIDEEP, and CDC

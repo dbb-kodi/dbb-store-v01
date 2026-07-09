@@ -87,8 +87,27 @@ export async function fetchRelatedProducts(slug: string, category: Category): Pr
       .eq('category', category)
       .neq('slug', slug)
       .limit(4)
-    if (error || !data || data.length === 0) return mockRelatedProducts(slug, category)
-    return data.map(normalizeProduct)
+    if (error) return mockRelatedProducts(slug, category)
+
+    const sameCategory = (data ?? []).map(normalizeProduct)
+    // A thin category (e.g. only one accessory) shouldn't render a rail with
+    // 3 empty grid columns. Top up from other categories rather than leaving
+    // it looking abandoned — still relevant (same store, same active set),
+    // just not the same category.
+    if (sameCategory.length < 4) {
+      const { data: rest, error: restError } = await supabase
+        .from('products')
+        .select('*, variants(*)')
+        .eq('active', true)
+        .neq('category', category)
+        .neq('slug', slug)
+        .limit(4 - sameCategory.length)
+      if (!restError && rest) {
+        sameCategory.push(...rest.map(normalizeProduct))
+      }
+    }
+    if (sameCategory.length === 0) return mockRelatedProducts(slug, category)
+    return sameCategory
   } catch {
     return mockRelatedProducts(slug, category)
   }
