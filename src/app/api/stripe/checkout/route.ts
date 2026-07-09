@@ -120,11 +120,13 @@ export async function POST(request: NextRequest) {
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
     let orderId: string | null = null
+    let customerEmail: string | undefined
     const supabase = createClient()
     if (supabase) {
       const {
         data: { user },
       } = await supabase.auth.getUser()
+      customerEmail = user?.email ?? guestEmail ?? undefined
 
       // The "orders_insert_own_or_guest" RLS policy already permits this
       // insert (auth.uid() = user_id, or user_id is null for guests), so
@@ -200,6 +202,7 @@ export async function POST(request: NextRequest) {
       // cancelled so unpaid orders don't accumulate in admin/order lists.
       expires_at: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
       ...(orderId ? { metadata: { order_id: orderId } } : {}),
+      ...(customerEmail ? { customer_email: customerEmail } : {}),
     })
 
     return NextResponse.json({ url: session.url })

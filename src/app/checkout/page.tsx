@@ -1,21 +1,46 @@
 'use client'
 // src/app/checkout/page.tsx
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useCart } from '@/lib/store/cart'
 import { Footer } from '@/components/layout/Footer'
+import { createClient } from '@/lib/supabase/client'
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export default function CheckoutPage() {
   const { items, subtotal } = useCart()
   const [loading, setLoading] = useState(false)
+  // null = still checking session; false = guest; true = logged in
+  const [isGuest, setIsGuest] = useState<boolean | null>(null)
+  const [guestEmail, setGuestEmail] = useState('')
+  const [emailTouched, setEmailTouched] = useState(false)
+
+  useEffect(() => {
+    const supabase = createClient()
+    if (!supabase) {
+      setIsGuest(true)
+      return
+    }
+    supabase.auth.getUser().then(({ data }: { data: { user: unknown } }) => {
+      setIsGuest(!data.user)
+    })
+  }, [])
+
+  const emailValid = EMAIL_RE.test(guestEmail)
+  const canSubmit = isGuest === false || emailValid
 
   const handleCheckout = async () => {
     if (items.length === 0) return
+    if (isGuest && !emailValid) {
+      setEmailTouched(true)
+      return
+    }
     setLoading(true)
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({ items, guestEmail: isGuest ? guestEmail : undefined }),
       })
       const data = await res.json()
       if (data.url) {
@@ -60,10 +85,33 @@ export default function CheckoutPage() {
               <span className="font-display text-3xl text-dbb-cream">${subtotal().toFixed(2)}</span>
             </div>
 
+            {isGuest && (
+              <div className="mb-8">
+                <label htmlFor="guest-email" className="font-body text-xs tracking-[0.2em] uppercase text-dbb-ash mb-3 block">
+                  Email — for your receipt and order updates
+                </label>
+                <input
+                  id="guest-email"
+                  type="email"
+                  required
+                  value={guestEmail}
+                  onChange={(e) => setGuestEmail(e.target.value)}
+                  onBlur={() => setEmailTouched(true)}
+                  placeholder="you@example.com"
+                  className="w-full bg-dbb-black border border-dbb-border text-dbb-cream font-body
+                             text-sm px-4 py-3 focus:outline-none focus:border-dbb-cream
+                             transition-colors placeholder:text-dbb-muted"
+                />
+                {emailTouched && !emailValid && (
+                  <p className="font-body text-xs text-dbb-ledger mt-2">Enter a valid email to continue.</p>
+                )}
+              </div>
+            )}
+
             <button
               onClick={handleCheckout}
-              disabled={loading}
-              className="btn-primary w-full justify-center"
+              disabled={loading || !canSubmit}
+              className="btn-primary w-full justify-center disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {loading ? 'REDIRECTING...' : 'PROCEED TO PAYMENT'}
             </button>
