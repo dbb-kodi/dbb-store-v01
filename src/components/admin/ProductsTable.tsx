@@ -51,7 +51,7 @@ export function ProductsTable({ products }: { products: Product[] }) {
                 </td>
                 <td className="px-5 py-4 text-dbb-cream">{p.name}</td>
                 <td className="px-5 py-4 text-dbb-muted capitalize">{p.category}</td>
-                <td className="px-5 py-4 text-dbb-cream font-display text-base">${p.price.toFixed(2)}</td>
+                <td className="px-5 py-4 text-dbb-cream font-display text-base tabular-nums">${p.price.toFixed(2)}</td>
                 <td className="px-5 py-4 text-dbb-muted">{stock}</td>
                 <td className="px-5 py-4">
                   <button

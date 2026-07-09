@@ -51,7 +51,7 @@ export function SizeSelector({ variants, selected, onChange, onSizeGuideClick }:
         const selectedVariant = variants.find((v) => v.size === selected)
         if (selectedVariant && selectedVariant.stock_qty > 0 && selectedVariant.stock_qty <= 5) {
           return (
-            <p className="font-body text-xs text-dbb-ledger mt-3">
+            <p className="font-body text-xs text-dbb-ledger-text mt-3">
               Only {selectedVariant.stock_qty} left in {selectedVariant.size}
             </p>
           )

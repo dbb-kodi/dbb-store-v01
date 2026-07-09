@@ -32,7 +32,7 @@ export function ProductDetail({ product }: { product: Product }) {
         {product.name.toUpperCase()}
       </h1>
 
-      <p className="font-display text-3xl text-dbb-cream mb-8">
+      <p className="font-display text-3xl text-dbb-cream mb-8 tabular-nums">
         ${product.price.toFixed(2)}
       </p>
 
@@ -64,6 +64,12 @@ export function ProductDetail({ product }: { product: Product }) {
             </li>
           ))}
         </ul>
+
+        {/* The line reference. Resolves to the exact variant once a size is
+            chosen, the way a ledger entry narrows from account to line. */}
+        <p className="font-body text-[10px] tracking-[0.25em] uppercase text-dbb-border mt-8 tabular-nums">
+          Ref {selectedVariant?.sku ?? `DBB-${product.slug.toUpperCase()}`}
+        </p>
       </div>
 
       <SizeGuideModal category={product.category} open={sizeGuideOpen} onClose={() => setSizeGuideOpen(false)} />

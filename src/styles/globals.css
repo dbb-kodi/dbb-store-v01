@@ -20,6 +20,16 @@
   ::selection {
     @apply bg-dbb-cream text-dbb-black;
   }
+
+  /* Nothing in this app had a visible focus ring. Keyboard users could tab
+     through the whole storefront with no idea where they were. :focus-visible
+     (not :focus) so it appears for keyboard and assistive tech without
+     ringing every mouse click. */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+    border-radius: 1px;
+  }
   /* Minimal scrollbar */
   ::-webkit-scrollbar {
     width: 8px;
@@ -66,9 +76,11 @@
   .admin-label {
     @apply block font-body text-[11px] tracking-[0.2em] uppercase text-dbb-ash mb-2;
   }
+  /* No focus:outline-none here — the border change alone is a weak focus cue,
+     and killing the outline removes the only one keyboard users get. */
   .admin-input {
     @apply w-full bg-dbb-black border border-dbb-border text-dbb-cream font-body
-           text-sm px-4 py-3 focus:outline-none focus:border-dbb-cream
+           text-sm px-4 py-3 focus:border-dbb-cream
            transition-colors placeholder:text-dbb-muted;
   }
 

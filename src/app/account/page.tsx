@@ -34,7 +34,7 @@ export default async function AccountPage() {
                 <p className="text-dbb-muted text-xs">{new Date(o.created_at).toLocaleDateString()} — {o.items.length} item(s)</p>
               </div>
               <div className="text-right">
-                <p className="text-dbb-cream font-display text-base">${o.total.toFixed(2)}</p>
+                <p className="text-dbb-cream font-display text-base tabular-nums">${o.total.toFixed(2)}</p>
                 <p className="text-dbb-muted text-xs capitalize">{o.status}</p>
               </div>
             </div>

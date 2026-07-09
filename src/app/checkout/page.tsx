@@ -79,7 +79,7 @@ export default function CheckoutPage() {
                     <p className="font-body text-sm text-dbb-cream">{item.productName}</p>
                     <p className="font-body text-xs text-dbb-muted mt-0.5">{item.size} × {item.quantity}</p>
                   </div>
-                  <p className="font-display text-xl text-dbb-cream">
+                  <p className="font-display text-xl text-dbb-cream tabular-nums">
                     ${(item.price * item.quantity).toFixed(2)}
                   </p>
                 </div>
@@ -88,7 +88,7 @@ export default function CheckoutPage() {
 
             <div className="flex justify-between mb-10">
               <span className="font-body text-sm text-dbb-ash uppercase tracking-[0.2em]">Subtotal</span>
-              <span className="font-display text-3xl text-dbb-cream">${subtotal().toFixed(2)}</span>
+              <span className="font-display text-3xl text-dbb-cream tabular-nums">${subtotal().toFixed(2)}</span>
             </div>
 
             {isGuest && (
@@ -105,11 +105,11 @@ export default function CheckoutPage() {
                   onBlur={() => setEmailTouched(true)}
                   placeholder="you@example.com"
                   className="w-full bg-dbb-black border border-dbb-border text-dbb-cream font-body
-                             text-sm px-4 py-3 focus:outline-none focus:border-dbb-cream
+                             text-sm px-4 py-3 focus:border-dbb-cream
                              transition-colors placeholder:text-dbb-muted"
                 />
                 {emailTouched && !emailValid && (
-                  <p className="font-body text-xs text-dbb-ledger mt-2">Enter a valid email to continue.</p>
+                  <p className="font-body text-xs text-dbb-ledger-text mt-2">Enter a valid email to continue.</p>
                 )}
               </div>
             )}
@@ -119,7 +119,7 @@ export default function CheckoutPage() {
                 role="alert"
                 className="mb-6 border border-dbb-ledger bg-dbb-ledger/10 px-4 py-3"
               >
-                <p className="font-body text-sm text-dbb-ledger">{checkoutError}</p>
+                <p className="font-body text-sm text-dbb-ledger-text">{checkoutError}</p>
               </div>
             )}
 

@@ -12,14 +12,24 @@ module.exports = {
           surface: '#111111',
           elevated: '#1A1A1A',
           border: '#2A2A2A',
-          muted: '#666666',
+          // #666666 measured 3.66:1 on black and 3.29:1 on surface — below the
+          // 4.5:1 floor for normal text, and this is the body-copy colour across
+          // the whole site. #858585 gives 5.69 / 5.12 / 4.72 on black / surface /
+          // elevated. Still reads as muted; now legible.
+          muted: '#858585',
           ash: '#999999',
           cream: '#FFFFFF',
           // The only color logic in the system: debit (red) marks a before-state
           // — struck-through prices, low-stock, the ticker's static mark. Credit
           // (green) marks an after-state — new drops, success, in-stock.
+          // These two are for rules, borders and fills, where contrast minimums
+          // don't apply to text.
           ledger: '#C41E1E',
           credit: '#2E7D4F',
+          // ledger red is only 3.55:1 on black — fine for a 2px rule, illegible
+          // as small text. This is the same red raised to 5.37:1 for anything
+          // that has to be *read* ("Only 3 left", checkout errors).
+          'ledger-text': '#E5484D',
         },
       },
       fontFamily: {

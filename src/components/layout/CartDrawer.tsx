@@ -78,7 +78,7 @@ export function CartDrawer() {
                     <p className="font-body text-xs text-dbb-muted mt-0.5">
                       {item.size}{item.color ? ` · ${item.color}` : ''}
                     </p>
-                    <p className="font-display text-lg text-dbb-cream mt-1">${item.price.toFixed(2)}</p>
+                    <p className="font-display text-lg text-dbb-cream mt-1 tabular-nums">${item.price.toFixed(2)}</p>
 
                     <div className="flex items-center gap-3 mt-2">
                       <button
@@ -93,7 +93,7 @@ export function CartDrawer() {
                       >+</button>
                     </div>
                     {item.quantity >= item.maxQty && (
-                      <p className="font-body text-xs text-dbb-ledger mt-1">Max available in stock</p>
+                      <p className="font-body text-xs text-dbb-ledger-text mt-1">Max available in stock</p>
                     )}
                   </div>
 
@@ -114,7 +114,7 @@ export function CartDrawer() {
           <div className="px-6 py-6 border-t border-dbb-border">
             <div className="flex justify-between mb-4">
               <span className="font-body text-sm text-dbb-ash uppercase tracking-[0.2em]">Subtotal</span>
-              <span className="font-display text-2xl text-dbb-cream">${subtotal().toFixed(2)}</span>
+              <span className="font-display text-2xl text-dbb-cream tabular-nums">${subtotal().toFixed(2)}</span>
             </div>
             <p className="font-body text-xs text-dbb-muted mb-4">Shipping calculated at checkout</p>
             <button onClick={handleCheckout} className="btn-primary w-full justify-center">CHECKOUT</button>

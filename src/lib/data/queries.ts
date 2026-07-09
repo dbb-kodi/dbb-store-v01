@@ -113,20 +113,38 @@ export async function fetchRelatedProducts(slug: string, category: Category): Pr
   }
 }
 
+/**
+ * Distinct posts only, by image.
+ *
+ * The seed reuses a handful of stock photos across every community post, so a
+ * six-post grid rendered the same person several times as several different
+ * customers. Deduping here rather than at each call site means no surface can
+ * reintroduce fabricated social proof by forgetting to filter.
+ */
+function dedupeByMedia(posts: CommunityPost[]): CommunityPost[] {
+  const seen = new Set<string>()
+  return posts.filter((post) => {
+    if (seen.has(post.media_url)) return false
+    seen.add(post.media_url)
+    return true
+  })
+}
+
 export async function fetchCommunityPosts(limit?: number): Promise<CommunityPost[]> {
-  const fallback = limit ? MOCK_COMMUNITY_POSTS.slice(0, limit) : MOCK_COMMUNITY_POSTS
+  const fallback = dedupeByMedia(MOCK_COMMUNITY_POSTS).slice(0, limit ?? undefined)
   const supabase = createClient()
   if (!supabase) return fallback
   try {
-    let query = supabase
+    // Fetch before limiting: duplicates must be removed from the full set, or a
+    // limit of 6 could return 6 rows that collapse to 1 distinct image.
+    const { data, error } = await supabase
       .from('community_posts')
       .select('*')
       .eq('approved', true)
       .order('created_at', { ascending: false })
-    if (limit) query = query.limit(limit)
-    const { data, error } = await query
     if (error || !data || data.length === 0) return fallback
-    return data as CommunityPost[]
+    const distinct = dedupeByMedia(data as CommunityPost[])
+    return limit ? distinct.slice(0, limit) : distinct
   } catch {
     return fallback
   }
