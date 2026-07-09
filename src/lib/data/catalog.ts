@@ -15,24 +15,32 @@ export const placeholderImage = (text: string, w = 800, h = 1000) => {
 const unsplash = (id: string, w = 800, h = 1000) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&h=${h}&q=80`
 
-// Per-product image map (Unsplash photo IDs, all free to use under Unsplash License).
+// Per-product image map.
+//
+// Six slots are deliberately blank. Every image previously here was audited by
+// downloading it and looking at the pixels, and each of these carried either a
+// third party's brand mark or a subject that has nothing to do with the product:
+//
+//   mindset-hoodie      a red woven "UNSPLASH / VANSCHNEIDER" tag on the garment
+//   no-excuses-hoodie   an embroidered "UNDERGROUND SNAX" shield
+//   dbb-tee             a hooded figure in a concrete memorial installation; also a windbreaker
+//   dbb-cap             a beanie printed "KASIDEEP — THE PRODUCER EDITION"
+//   mindset-beanie      a macro of an adidas logo on a knit shoe upper
+//   movement-tote       a CDC-branded duffel packed with biohazard bags and PPE
+//
+// They render as the placeholder until art-directed replacements land. Do not
+// refill these by picking whatever a stock search returns — that is exactly how
+// the above shipped. Look at the pixels of anything you put here.
 const PRODUCT_IMAGES: Record<string, string> = {
-  'mindset-hoodie':       unsplash('1499972777470-6a932ea55420'),   // black hoodie flat lay
-  'no-excuses-hoodie':    unsplash('1612978322313-be209301e185'),   // black hoodie on rack
-  'built-different-tee':  unsplash('1564382225035-dbdf309682a6'),   // men's white tee
-  'the-movement-tee':     unsplash('1722310752951-4d459d28c678'),   // white tee on wall
-  'dbb-tee':              unsplash('1494578924983-b472e391e1fa'),   // person in black pullover
-  'dbb-cap':              unsplash('1678951671924-bd2c022382b0'),   // black beanie/cap product
-  'mindset-beanie':       unsplash('1606748294390-f6449e6c61ef'),   // black & white knit cap
-  'movement-tote':        unsplash('1583911201080-eb7064a15428'),   // black & white tote bag
+  'built-different-tee':  unsplash('1564382225035-dbdf309682a6'),   // rooftop scene; garment barely in frame
+  'the-movement-tee':     unsplash('1722310752951-4d459d28c678'),   // cream tee on a hanger
 }
 
 // Lifestyle shots for categories and community grid.
+// Only the one clean frame remains; the other three were the UNDERGROUND SNAX
+// hoodie, the UNSPLASH-tagged sleeve, and a hoodie carrying a third party's graphic.
 const LIFESTYLE = [
-  unsplash('1546863929-b9c543a2aec7', 600, 800),  // woman in black hoodie
-  unsplash('1719620293684-24c428bce8fb', 600, 800), // person black hoodie graphic
-  unsplash('1612978322313-be209301e185', 600, 800), // hoodie on rack
-  unsplash('1499972777470-6a932ea55420', 600, 800), // hoodie flat
+  unsplash('1546863929-b9c543a2aec7', 600, 800),  // hooded figure, no visible brand mark
 ]
 
 const img = placeholderImage
@@ -82,11 +90,13 @@ export function getRelatedProducts(slug: string, category: Category): Product[] 
   return PRODUCTS.filter((p) => p.active && p.slug !== slug && p.category === category).slice(0, 4)
 }
 
+// Hoodies / Headwear / Accessories reused the watermarked, KASIDEEP, and CDC
+// biohazard frames respectively — blanked with the rest.
 export const CATEGORIES: Array<{ key: Category; label: string; image: string }> = [
-  { key: 'hoodies',     label: 'Hoodies',     image: unsplash('1499972777470-6a932ea55420', 600, 800) },
+  { key: 'hoodies',     label: 'Hoodies',     image: img('HOODIES', 600, 800) },
   { key: 'tees',        label: 'Tees',        image: unsplash('1564382225035-dbdf309682a6', 600, 800) },
-  { key: 'headwear',    label: 'Headwear',    image: unsplash('1678951671924-bd2c022382b0', 600, 800) },
-  { key: 'accessories', label: 'Accessories', image: unsplash('1583911201080-eb7064a15428', 600, 800) },
+  { key: 'headwear',    label: 'Headwear',    image: img('HEADWEAR', 600, 800) },
+  { key: 'accessories', label: 'Accessories', image: img('ACCESSORIES', 600, 800) },
 ]
 
 export const COMMUNITY_POSTS: CommunityPost[] = Array.from({ length: 9 }).map((_, i) => ({

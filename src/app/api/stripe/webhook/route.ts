@@ -5,8 +5,18 @@ import { createAdminClient } from '@/lib/supabase/server'
 export async function POST(request: NextRequest) {
   const stripeKey = process.env.STRIPE_SECRET_KEY
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
-  if (!stripeKey || !webhookSecret) {
+
+  // No Stripe at all: nothing is sending us events, so acknowledge and move on.
+  if (!stripeKey) {
     return NextResponse.json({ received: true })
+  }
+
+  // Stripe is live but we can't verify signatures. A 200 here tells Stripe the
+  // event was delivered and it stops retrying — the payment would be lost. Fail
+  // loudly so the events stay queued until the secret is configured.
+  if (!webhookSecret) {
+    console.error('STRIPE_WEBHOOK_SECRET is not set; refusing to acknowledge webhook events.')
+    return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 })
   }
 
   let event: import('stripe').default.Event
