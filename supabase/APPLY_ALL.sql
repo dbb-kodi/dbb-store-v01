@@ -1,5 +1,8 @@
 -- DBB: apply-everything script (paste into Supabase SQL Editor and Run)
--- Combines migrations 0001-0004 + product seed. Idempotent where possible.
+-- Combines migrations 0001-0008 + product seed. Idempotent where possible.
+-- 0006/0007 are collapsed to their final corrected state below rather than
+-- replayed as history — see the individual migration files for why 0006's
+-- first attempt at restricting decrement_variant_stock didn't work.
 
 -- ===== create storage bucket (replaces CLI step from 0002) =====
 insert into storage.buckets (id, name, public) values ('product-images','product-images',true) on conflict (id) do nothing;
@@ -377,3 +380,68 @@ with p8 as (
 insert into variants (product_id, size, color, stock_qty, sku)
 select id, v.size, 'Black', v.stock_qty, 'MOVEMENT-TOTE-' || v.size
 from p8, (values ('XS',0),('S',11),('M',10),('L',9),('XL',8),('XXL',7)) as v(size, stock_qty);
+
+-- ===== 0005: blank infringing seed images (see migrations/0005_*.sql for full detail) =====
+-- Six of the eight product images above carry a third party's brand mark
+-- (adidas, "UNDERGROUND SNAX", "KASIDEEP") or show something unrelated to
+-- the product (a CDC biohazard duffel). Runs after the seed above so the
+-- URL-substring match still finds them.
+update public.products
+set image_url = 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22800%22%20height%3D%221000%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23111111%22%2F%3E%3C%2Fsvg%3E'
+where image_url like '%photo-1499972777470%'
+   or image_url like '%photo-1612978322313%'
+   or image_url like '%photo-1494578924983%'
+   or image_url like '%photo-1678951671924%'
+   or image_url like '%photo-1606748294390%'
+   or image_url like '%photo-1583911201080%';
+
+delete from public.community_posts
+where media_url like '%photo-1612978322313%'
+   or media_url like '%photo-1499972777470%'
+   or media_url like '%photo-1719620293684%';
+
+-- ===== 0006 + 0007 (collapsed): atomic stock decrement, service_role only =====
+-- stock_qty was never decremented anywhere — "sold out" was fiction after
+-- the first sale. This function is called once per order_item when a
+-- payment settles (src/app/api/stripe/webhook/route.ts). The WHERE clause
+-- (stock_qty >= qty) makes the UPDATE atomic and race-safe without an
+-- explicit lock. Grants go straight to service_role — 0006 originally tried
+-- `revoke all ... from public`, which does not remove the EXECUTE grant
+-- Supabase gives anon/authenticated by default on new public-schema
+-- functions; verified live that the anon key could call this and actually
+-- decrement stock before 0007 corrected it.
+create or replace function public.decrement_variant_stock(p_variant_id uuid, p_qty integer)
+returns boolean
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_rows integer;
+begin
+  update public.variants
+  set stock_qty = stock_qty - p_qty
+  where id = p_variant_id and stock_qty >= p_qty;
+
+  get diagnostics v_rows = row_count;
+  return v_rows > 0;
+end;
+$$;
+
+revoke execute on function public.decrement_variant_stock(uuid, integer) from anon, authenticated, public;
+grant execute on function public.decrement_variant_stock(uuid, integer) to service_role;
+
+-- ===== 0008: restrict order INSERT to status='pending' =====
+-- orders_insert_own_or_guest (0003) checked auth.uid()/guest but never
+-- constrained status, so any client could insert a fabricated status:'paid'
+-- order with an arbitrary total, poisoning fetchAdminStats(). The real
+-- checkout path always inserts 'pending'; the only path that sets
+-- paid/fulfilled/cancelled is the webhook's UPDATE via the service-role
+-- client, which bypasses RLS and is unaffected by this.
+drop policy if exists "orders_insert_own_or_guest" on public.orders;
+
+create policy "orders_insert_own_or_guest" on public.orders
+  for insert with check (
+    (auth.uid() = user_id or user_id is null)
+    and status = 'pending'
+  );

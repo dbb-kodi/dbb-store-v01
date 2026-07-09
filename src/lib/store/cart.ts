@@ -82,6 +82,24 @@ export const useCart = create<CartState>()(
       subtotal: () => get().items.reduce((sum, i) => sum + i.price * i.quantity, 0),
       count: () => get().items.reduce((sum, i) => sum + i.quantity, 0),
     }),
-    { name: 'dbb-cart' }
+    {
+      name: 'dbb-cart',
+      version: 1,
+      // v0 carts (persisted before maxQty existed) hydrate with maxQty
+      // undefined on every item. Every cap check downstream does
+      // Math.min(n, item.maxQty), which silently becomes NaN the first
+      // time quantity is touched — corrupting quantity and therefore
+      // subtotal. Treat a missing cap as "unknown, don't clamp" rather
+      // than let it become NaN, same fix as cart-actions.ts getSavedCart.
+      migrate: (persisted: any, version) => {
+        if (version < 1 && persisted?.items) {
+          persisted.items = persisted.items.map((item: CartItem) => ({
+            ...item,
+            maxQty: item.maxQty ?? Infinity,
+          }))
+        }
+        return persisted
+      },
+    }
   )
 )
