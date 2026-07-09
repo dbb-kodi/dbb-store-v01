@@ -28,7 +28,7 @@ export default async function CommunityPage() {
                 src={post.media_url}
                 alt={post.caption ?? 'Community post'}
                 fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                className="object-cover media-zoom"
                 sizes="(max-width: 640px) 50vw, 33vw"
               />
               <div className="absolute inset-0 bg-dbb-black/0 group-hover:bg-dbb-black/60 transition-all duration-300 flex flex-col items-end justify-end p-4 opacity-0 group-hover:opacity-100">

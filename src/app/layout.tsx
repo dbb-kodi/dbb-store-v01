@@ -18,9 +18,24 @@ const body = Inter({
   variable: '--font-body',
 })
 
+// Inline SVG favicon — the ledger rule (thin over thick, debit red) under the
+// DBB mark. Data URI so there's no binary asset to keep in sync with the tokens.
+const FAVICON =
+  'data:image/svg+xml,' +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">' +
+      '<rect width="32" height="32" fill="#000000"/>' +
+      '<text x="16" y="17" font-family="Impact, sans-serif" font-size="15" font-weight="bold" ' +
+      'letter-spacing="0.5" fill="#FFFFFF" text-anchor="middle" dominant-baseline="middle">DBB</text>' +
+      '<rect x="6" y="23" width="20" height="1" fill="#C41E1E"/>' +
+      '<rect x="6" y="25" width="20" height="2" fill="#C41E1E"/>' +
+    '</svg>'
+  )
+
 export const metadata: Metadata = {
   title: 'DBB — Done Being Broke',
   description: 'More than clothing. It\'s a mindset. Premium streetwear for the driven.',
+  icons: { icon: FAVICON },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

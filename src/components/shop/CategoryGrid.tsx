@@ -22,7 +22,7 @@ export function CategoryGrid() {
               src={cat.image}
               alt={cat.label}
               fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-70 group-hover:opacity-90"
+              className="object-cover media-zoom opacity-70 group-hover:opacity-90"
               sizes="(max-width: 640px) 50vw, 25vw"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-dbb-black/80 to-transparent" />

@@ -21,7 +21,7 @@ export function ProductCard({ product }: Props) {
           src={product.image_url}
           alt={product.name}
           fill
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
+          className="object-cover media-zoom"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
         />
         {soldOut && (

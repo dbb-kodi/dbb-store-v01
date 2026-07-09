@@ -1,5 +1,5 @@
 -- DBB: apply-everything script (paste into Supabase SQL Editor and Run)
--- Combines migrations 0001-0008 + product seed. Idempotent where possible.
+-- Combines migrations 0001-0009 + product seed. Idempotent where possible.
 -- 0006/0007 are collapsed to their final corrected state below rather than
 -- replayed as history — see the individual migration files for why 0006's
 -- first attempt at restricting decrement_variant_stock didn't work.
@@ -393,7 +393,10 @@ where image_url like '%photo-1499972777470%'
    or image_url like '%photo-1494578924983%'
    or image_url like '%photo-1678951671924%'
    or image_url like '%photo-1606748294390%'
-   or image_url like '%photo-1583911201080%';
+   or image_url like '%photo-1583911201080%'
+   -- 0009: not infringing, but the garment is barely in the frame — a product
+   -- photo that doesn't show the product reads as a broken page.
+   or image_url like '%photo-1564382225035%';
 
 delete from public.community_posts
 where media_url like '%photo-1612978322313%'

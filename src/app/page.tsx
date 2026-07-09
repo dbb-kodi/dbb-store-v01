@@ -7,6 +7,7 @@ import { MessageSection } from '@/components/shop/MessageSection'
 import { CommunitySection } from '@/components/shop/CommunitySection'
 import { FinalCTA } from '@/components/shop/FinalCTA'
 import { Footer } from '@/components/layout/Footer'
+import { Reveal } from '@/components/Reveal'
 import { fetchSiteContent } from '@/lib/data/queries'
 
 export default async function HomePage() {
@@ -14,14 +15,27 @@ export default async function HomePage() {
 
   return (
     <main>
+      {/* Hero is above the fold — animating what's already on screen at load
+          is decoration, not communication. The tickers are constant motion
+          already. Neither is wrapped. */}
       <HeroSection headline={content.hero_headline} subtext={content.hero_subtext} />
       <TickerTape text={content.ticker_text} />
-      <FeaturedProducts />
+      <Reveal>
+        <FeaturedProducts />
+      </Reveal>
       <TickerTape inverted text={content.ticker_text} />
-      <CategoryGrid />
-      <MessageSection quote={content.message_quote} />
-      <CommunitySection />
-      <FinalCTA />
+      <Reveal>
+        <CategoryGrid />
+      </Reveal>
+      <Reveal>
+        <MessageSection quote={content.message_quote} />
+      </Reveal>
+      <Reveal>
+        <CommunitySection />
+      </Reveal>
+      <Reveal>
+        <FinalCTA />
+      </Reveal>
       <Footer />
     </main>
   )

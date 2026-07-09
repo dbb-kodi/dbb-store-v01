@@ -50,11 +50,17 @@ export function SizeGuideModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-dbb-black/80 px-6"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Size guide"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-dbb-black/80 px-6 motion-safe:animate-[fade-in_150ms_var(--ease-out)]"
       onClick={onClose}
     >
+      {/* Enters from scale(0.96), never scale(0) — nothing in the real world
+          appears from nothing. transform-origin stays centered: this is a
+          modal, not a popover anchored to its trigger. */}
       <div
-        className="bg-dbb-surface border border-dbb-border max-w-sm w-full p-8"
+        className="bg-dbb-surface border border-dbb-border max-w-sm w-full p-8 motion-safe:animate-[modal-in_200ms_var(--ease-out)]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-6">

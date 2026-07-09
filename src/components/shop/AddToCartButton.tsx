@@ -47,19 +47,45 @@ export function AddToCartButton({ product, selectedVariant }: Props) {
   return (
     <button
       onClick={handleAdd}
-      className={`btn-primary w-full justify-center gap-3 ${added ? 'bg-dbb-border text-dbb-cream' : ''}`}
+      aria-live="polite"
+      className={`btn-primary w-full justify-center gap-3 relative overflow-hidden ${
+        added ? 'bg-dbb-credit text-dbb-cream hover:bg-dbb-credit' : ''
+      }`}
+      style={{
+        transition:
+          'transform 160ms var(--ease-out), background-color 260ms var(--ease-out), color 260ms var(--ease-out)',
+      }}
     >
-      {added ? (
-        <>
-          <Check size={16} />
-          ADDED TO BAG
-        </>
-      ) : (
-        <>
-          <ShoppingBag size={16} />
-          ADD TO BAG — ${product.price.toFixed(2)}
-        </>
-      )}
+      {/* Both labels stay mounted and crossfade in place. A blur bridges the
+          two states so the eye reads one label transforming, rather than two
+          separate labels swapping — and it hides the fact that they're
+          different widths. Swapping the DOM node instead would jump the
+          button's content box mid-transition. */}
+      <span
+        aria-hidden={added}
+        className="flex items-center gap-3"
+        style={{
+          transition: 'opacity 200ms var(--ease-out), filter 200ms var(--ease-out)',
+          opacity: added ? 0 : 1,
+          filter: added ? 'blur(4px)' : 'blur(0)',
+        }}
+      >
+        <ShoppingBag size={16} />
+        ADD TO BAG — ${product.price.toFixed(2)}
+      </span>
+
+      <span
+        aria-hidden={!added}
+        className="absolute inset-0 flex items-center justify-center gap-3"
+        style={{
+          transition: 'opacity 200ms var(--ease-out), filter 200ms var(--ease-out)',
+          opacity: added ? 1 : 0,
+          filter: added ? 'blur(0)' : 'blur(4px)',
+        }}
+      >
+        <Check size={16} />
+        ADDED TO BAG
+      </span>
     </button>
   )
 }

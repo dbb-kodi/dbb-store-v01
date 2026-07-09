@@ -3,6 +3,14 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Built-in CSS easings are too weak to read as intentional. These are the
+       stronger custom variants — ledger for entering UI, drawer for the cart. */
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
   html {
     scroll-behavior: smooth;
   }
@@ -31,18 +39,27 @@
     @apply font-body text-xs tracking-[0.3em] uppercase text-dbb-muted mb-4;
   }
 
-  /* Primary button — white on black */
+  /* Primary button — white on black.
+     transition-all animated layout properties too; name the exact ones. The
+     :active scale is the cheapest possible "the interface heard you" signal. */
   .btn-primary {
     @apply inline-flex items-center gap-2 bg-dbb-cream text-dbb-black font-body text-sm
-           font-semibold tracking-[0.15em] uppercase px-8 py-4
-           transition-all duration-300 hover:bg-dbb-ash;
+           font-semibold tracking-[0.15em] uppercase px-8 py-4 hover:bg-dbb-ash;
+    transition: transform 160ms var(--ease-out), background-color 160ms var(--ease-out);
+  }
+  .btn-primary:active:not(:disabled) {
+    transform: scale(0.97);
   }
 
   /* Outline button */
   .btn-outline {
     @apply inline-flex items-center gap-2 border border-dbb-border text-dbb-cream
            font-body text-sm font-medium tracking-[0.15em] uppercase px-8 py-4
-           transition-all duration-300 hover:border-dbb-cream;
+           hover:border-dbb-cream;
+    transition: transform 160ms var(--ease-out), border-color 160ms var(--ease-out);
+  }
+  .btn-outline:active:not(:disabled) {
+    transform: scale(0.97);
   }
 
   /* Admin form controls */
@@ -58,6 +75,18 @@
   /* Product card hover wrapper */
   .product-card {
     @apply transition-opacity duration-300;
+  }
+
+  /* Image zoom on card/tile hover. Gated behind a real pointer: touch devices
+     fire :hover on tap, so an ungated hover-zoom leaves the image stuck
+     scaled up after the tap. 500ms — 700ms reads as sluggish at this scale. */
+  .media-zoom {
+    transition: transform 500ms var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .group:hover .media-zoom {
+      transform: scale(1.05);
+    }
   }
 
   /* Nav link */
@@ -84,11 +113,37 @@
   }
 }
 
+@layer components {
+  /* Scroll reveal. Transition (not keyframes) so a fast scroll back up can
+     retarget mid-flight instead of restarting from zero. 8px, not 40px —
+     the movement should register subconsciously, not announce itself. */
+  .reveal {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
+  }
+  .reveal[data-visible='true'] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee {
     animation: none;
   }
-  * {
+
+  /* Reduced motion means gentler, not none. Keep the opacity fade — it still
+     communicates "this just arrived" — and drop only the movement. */
+  .reveal {
+    transform: none;
+    transition: opacity 200ms ease;
+  }
+  .reveal[data-visible='true'] {
+    transform: none;
+  }
+
+  *:not(.reveal) {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

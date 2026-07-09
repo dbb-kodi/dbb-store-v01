@@ -14,6 +14,7 @@ export default function CheckoutPage() {
   const [isGuest, setIsGuest] = useState<boolean | null>(null)
   const [guestEmail, setGuestEmail] = useState('')
   const [emailTouched, setEmailTouched] = useState(false)
+  const [checkoutError, setCheckoutError] = useState<string | null>(null)
 
   useEffect(() => {
     const supabase = createClient()
@@ -36,6 +37,7 @@ export default function CheckoutPage() {
       return
     }
     setLoading(true)
+    setCheckoutError(null)
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
@@ -45,9 +47,13 @@ export default function CheckoutPage() {
       const data = await res.json()
       if (data.url) {
         window.location.href = data.url
-      } else {
-        alert(data.message ?? 'Checkout is currently unavailable.')
+        return // don't clear loading — we're navigating away
       }
+      setCheckoutError(data.message ?? 'Checkout is currently unavailable.')
+    } catch {
+      // fetch throws on network failure; without this the rejection is unhandled
+      // and the button silently stays stuck in its loading state.
+      setCheckoutError('Could not reach the server. Check your connection and try again.')
     } finally {
       setLoading(false)
     }
@@ -105,6 +111,15 @@ export default function CheckoutPage() {
                 {emailTouched && !emailValid && (
                   <p className="font-body text-xs text-dbb-ledger mt-2">Enter a valid email to continue.</p>
                 )}
+              </div>
+            )}
+
+            {checkoutError && (
+              <div
+                role="alert"
+                className="mb-6 border border-dbb-ledger bg-dbb-ledger/10 px-4 py-3"
+              >
+                <p className="font-body text-sm text-dbb-ledger">{checkoutError}</p>
               </div>
             )}
 

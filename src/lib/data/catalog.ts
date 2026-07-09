@@ -32,7 +32,9 @@ const unsplash = (id: string, w = 800, h = 1000) =>
 // refill these by picking whatever a stock search returns — that is exactly how
 // the above shipped. Look at the pixels of anything you put here.
 const PRODUCT_IMAGES: Record<string, string> = {
-  'built-different-tee':  unsplash('1564382225035-dbdf309682a6'),   // rooftop scene; garment barely in frame
+  // built-different-tee's frame was a rooftop scene with the garment barely in
+  // it — no legal exposure, but a photo that doesn't show the product reads as
+  // a broken page, which is worse than an honest placeholder. Blanked too.
   'the-movement-tee':     unsplash('1722310752951-4d459d28c678'),   // cream tee on a hanger
 }
 
@@ -99,7 +101,7 @@ export function getRelatedProducts(slug: string, category: Category): Product[] 
 // biohazard frames respectively — blanked with the rest.
 export const CATEGORIES: Array<{ key: Category; label: string; image: string }> = [
   { key: 'hoodies',     label: 'Hoodies',     image: img('HOODIES', 600, 800) },
-  { key: 'tees',        label: 'Tees',        image: unsplash('1564382225035-dbdf309682a6', 600, 800) },
+  { key: 'tees',        label: 'Tees',        image: img('TEES', 600, 800) },
   { key: 'headwear',    label: 'Headwear',    image: img('HEADWEAR', 600, 800) },
   { key: 'accessories', label: 'Accessories', image: img('ACCESSORIES', 600, 800) },
 ]

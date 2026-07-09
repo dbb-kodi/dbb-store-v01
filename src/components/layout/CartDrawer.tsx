@@ -23,14 +23,24 @@ export function CartDrawer() {
 
   return (
     <>
-      {isOpen && (
-        <div className="fixed inset-0 bg-black/70 z-50 backdrop-blur-sm" onClick={closeCart} />
-      )}
-
+      {/* Overlay fades rather than snapping in; pointer-events-none while
+          hidden so the closed drawer can't swallow clicks on the page. */}
       <div
-        className={`fixed top-0 right-0 h-full w-full max-w-md bg-dbb-surface z-50 flex flex-col transform transition-transform duration-300 ease-in-out ${
+        onClick={closeCart}
+        aria-hidden={!isOpen}
+        className={`fixed inset-0 bg-black/70 z-50 backdrop-blur-sm transition-opacity duration-300 ease-out ${
+          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+      />
+
+      {/* translate-x-full is a percentage of the drawer's own width, so this
+          stays correct if max-w-md ever changes. Curve is the iOS drawer
+          easing — a drawer is an entering surface, so it must not ease-in. */}
+      <div
+        className={`fixed top-0 right-0 h-full w-full max-w-md bg-dbb-surface z-50 flex flex-col transform ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
+        style={{ transition: 'transform 500ms var(--ease-drawer)' }}
       >
         <div className="flex items-center justify-between px-6 py-5 border-b border-dbb-border">
           <h2 className="font-display text-2xl tracking-[0.2em] text-dbb-cream">
