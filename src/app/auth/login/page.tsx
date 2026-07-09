@@ -1,6 +1,7 @@
 // src/app/auth/login/page.tsx
 import Link from 'next/link'
 import { signIn } from '../actions'
+import { SubmitButton } from '@/components/auth/SubmitButton'
 
 export const metadata = { title: 'Login — DBB' }
 
@@ -37,9 +38,7 @@ export default function LoginPage({
             <label className="admin-label">Password</label>
             <input type="password" name="password" placeholder="••••••••" className="admin-input" />
           </div>
-          <button type="submit" className="btn-primary w-full justify-center mt-2">
-            SIGN IN
-          </button>
+          <SubmitButton label="SIGN IN" pendingLabel="SIGNING IN…" />
         </form>
 
         <p className="font-body text-sm text-dbb-muted text-center mt-8">

@@ -1,15 +1,14 @@
 // src/app/admin/page.tsx — Admin Dashboard
-import { getAllProducts } from '@/lib/data/catalog'
+import { fetchAdminStats } from '@/lib/data/queries'
 
-export default function AdminDashboard() {
-  const products = getAllProducts()
-  const totalValue = products.reduce((sum, p) => sum + p.price, 0)
+export default async function AdminDashboard() {
+  const { productCount, orderCount, paidRevenue, recentProducts } = await fetchAdminStats()
 
   const stats = [
-    { label: 'Products', value: products.length },
+    { label: 'Products', value: productCount },
     { label: 'Categories', value: 4 },
-    { label: 'Total Value', value: `$${totalValue.toFixed(0)}` },
-    { label: 'Orders', value: '—' },
+    { label: 'Revenue (paid)', value: `$${paidRevenue.toFixed(0)}` },
+    { label: 'Orders', value: orderCount },
   ]
 
   return (
@@ -29,7 +28,7 @@ export default function AdminDashboard() {
       <div className="border border-dbb-border p-6">
         <p className="font-body text-xs tracking-[0.2em] uppercase text-dbb-ash mb-6">Recent Products</p>
         <div className="divide-y divide-dbb-border">
-          {products.slice(0, 5).map((p) => (
+          {recentProducts.map((p) => (
             <div key={p.id} className="flex justify-between py-4">
               <div>
                 <p className="font-body text-sm text-dbb-cream">{p.name}</p>

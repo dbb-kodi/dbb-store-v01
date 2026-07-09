@@ -1,6 +1,7 @@
 // src/app/account/page.tsx
 import { redirect } from 'next/navigation'
 import { getSessionProfile } from '@/lib/supabase/session'
+import { signOut } from '@/app/auth/actions'
 import { getOrders } from './actions'
 
 export default async function AccountPage() {
@@ -11,8 +12,16 @@ export default async function AccountPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-16">
-      <p className="section-label">Account</p>
-      <h1 className="font-display text-5xl tracking-[0.04em] text-dbb-cream mb-12">ORDER HISTORY</h1>
+      <div className="flex items-end justify-between mb-12">
+        <div>
+          <p className="section-label">Account</p>
+          <h1 className="font-display text-5xl tracking-[0.04em] text-dbb-cream">ORDER HISTORY</h1>
+          <p className="font-body text-xs text-dbb-muted mt-3">{session.user.email}</p>
+        </div>
+        <form action={signOut}>
+          <button type="submit" className="btn-outline">SIGN OUT</button>
+        </form>
+      </div>
 
       {orders.length === 0 ? (
         <p className="text-dbb-muted text-sm">No orders yet.</p>

@@ -1,8 +1,9 @@
 'use client'
 // src/components/admin/ContentEditor.tsx
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import toast from 'react-hot-toast'
+import { saveContent } from '@/app/admin/content/actions'
 
 interface Field {
   key: string
@@ -15,10 +16,14 @@ export function ContentEditor({ fields: initial }: { fields: Field[] }) {
   const [content, setContent] = useState<Record<string, string>>(
     Object.fromEntries(initial.map((f) => [f.key, f.currentValue]))
   )
+  const [isPending, startTransition] = useTransition()
 
   const handleSave = () => {
-    // Stub — will call Supabase once backend is wired
-    toast.success('Content saved (local preview only)')
+    startTransition(async () => {
+      const result = await saveContent(content)
+      if (result.error) toast.error(result.error)
+      else toast.success('Content saved')
+    })
   }
 
   return (
@@ -45,12 +50,9 @@ export function ContentEditor({ fields: initial }: { fields: Field[] }) {
       ))}
 
       <div className="pt-4">
-        <button onClick={handleSave} className="btn-primary">
-          SAVE CHANGES
+        <button onClick={handleSave} disabled={isPending} className="btn-primary disabled:opacity-50">
+          {isPending ? 'SAVING…' : 'SAVE CHANGES'}
         </button>
-        <p className="font-body text-xs text-dbb-muted mt-3">
-          Changes are local until Supabase is connected.
-        </p>
       </div>
     </div>
   )

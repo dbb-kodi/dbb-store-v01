@@ -7,16 +7,19 @@ import { MessageSection } from '@/components/shop/MessageSection'
 import { CommunitySection } from '@/components/shop/CommunitySection'
 import { FinalCTA } from '@/components/shop/FinalCTA'
 import { Footer } from '@/components/layout/Footer'
+import { fetchSiteContent } from '@/lib/data/queries'
 
-export default function HomePage() {
+export default async function HomePage() {
+  const content = await fetchSiteContent()
+
   return (
     <main>
-      <HeroSection />
-      <TickerTape />
+      <HeroSection headline={content.hero_headline} subtext={content.hero_subtext} />
+      <TickerTape text={content.ticker_text} />
       <FeaturedProducts />
-      <TickerTape inverted />
+      <TickerTape inverted text={content.ticker_text} />
       <CategoryGrid />
-      <MessageSection />
+      <MessageSection quote={content.message_quote} />
       <CommunitySection />
       <FinalCTA />
       <Footer />

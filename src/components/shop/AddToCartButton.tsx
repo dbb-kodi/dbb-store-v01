@@ -36,6 +36,7 @@ export function AddToCartButton({ product, selectedVariant }: Props) {
       price: product.price,
       quantity: 1,
       imageUrl: product.image_url,
+      maxQty: selectedVariant.stock_qty,
     })
 
     setAdded(true)

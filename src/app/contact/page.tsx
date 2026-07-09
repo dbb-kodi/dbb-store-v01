@@ -11,7 +11,7 @@ export default function ContactPage() {
     <main className="pt-16">
       <div className="max-w-2xl mx-auto px-6 py-24">
         <p className="section-label">Get In Touch</p>
-        <h1 className="font-display text-[clamp(2.5rem,6vw,5rem)] tracking-[0.04em] text-dbb-cream mb-4">
+        <h1 className="font-display text-display-md text-dbb-cream mb-4">
           CONTACT
         </h1>
         <p className="font-body text-base text-dbb-ash mb-16 leading-relaxed">

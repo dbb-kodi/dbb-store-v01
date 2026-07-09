@@ -29,16 +29,20 @@ export const useCart = create<CartState>()(
         set((state) => {
           const existing = state.items.find((i) => i.variantId === item.variantId)
           if (existing) {
+            const cap = Math.min(existing.maxQty, item.maxQty)
             return {
               isOpen: true,
               items: state.items.map((i) =>
                 i.variantId === item.variantId
-                  ? { ...i, quantity: i.quantity + item.quantity }
+                  ? { ...i, maxQty: cap, quantity: Math.min(i.quantity + item.quantity, cap) }
                   : i
               ),
             }
           }
-          return { isOpen: true, items: [...state.items, item] }
+          return {
+            isOpen: true,
+            items: [...state.items, { ...item, quantity: Math.min(item.quantity, item.maxQty) }],
+          }
         }),
 
       removeItem: (variantId) =>
@@ -50,7 +54,7 @@ export const useCart = create<CartState>()(
             quantity <= 0
               ? state.items.filter((i) => i.variantId !== variantId)
               : state.items.map((i) =>
-                  i.variantId === variantId ? { ...i, quantity } : i
+                  i.variantId === variantId ? { ...i, quantity: Math.min(quantity, i.maxQty) } : i
                 ),
         })),
 

@@ -1,19 +1,20 @@
 // src/app/community/page.tsx
 import Image from 'next/image'
 import { Footer } from '@/components/layout/Footer'
-import { COMMUNITY_POSTS } from '@/lib/data/catalog'
+import { fetchCommunityPosts } from '@/lib/data/queries'
 
 export const metadata = {
   title: 'Community — DBB',
   description: 'The DBB movement — real people, real mindset.',
 }
 
-export default function CommunityPage() {
+export default async function CommunityPage() {
+  const posts = await fetchCommunityPosts()
   return (
     <main className="pt-16">
       <div className="max-w-7xl mx-auto px-6 py-16">
         <p className="section-label">The Movement</p>
-        <h1 className="font-display text-[clamp(2.5rem,6vw,5rem)] tracking-[0.04em] text-dbb-cream mb-4">
+        <h1 className="font-display text-display-md text-dbb-cream mb-4">
           COMMUNITY
         </h1>
         <p className="font-body text-base text-dbb-ash max-w-lg mb-16 leading-relaxed">
@@ -21,7 +22,7 @@ export default function CommunityPage() {
         </p>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
-          {COMMUNITY_POSTS.map((post) => (
+          {posts.map((post) => (
             <div key={post.id} className="group relative aspect-square overflow-hidden bg-dbb-surface">
               <Image
                 src={post.media_url}

@@ -23,6 +23,12 @@ export async function signIn(formData: FormData) {
   redirect(profile?.role === 'admin' ? '/admin' : '/account')
 }
 
+export async function signOut() {
+  const supabase = createClient()
+  if (supabase) await supabase.auth.signOut()
+  redirect('/')
+}
+
 export async function signUp(formData: FormData) {
   const email = String(formData.get('email') ?? '')
   const password = String(formData.get('password') ?? '')

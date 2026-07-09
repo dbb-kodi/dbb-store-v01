@@ -1,13 +1,14 @@
 'use client'
 // src/components/layout/CartDrawer.tsx
 
+import Link from 'next/link'
 import { X, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useCart } from '@/lib/store/cart'
 
 export function CartDrawer() {
-  const { items, isOpen, closeCart, removeItem, updateQuantity, subtotal } = useCart()
+  const { items, isOpen, closeCart, removeItem, updateQuantity, subtotal, count } = useCart()
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
 
@@ -33,7 +34,7 @@ export function CartDrawer() {
       >
         <div className="flex items-center justify-between px-6 py-5 border-b border-dbb-border">
           <h2 className="font-display text-2xl tracking-[0.2em] text-dbb-cream">
-            YOUR BAG ({list.length})
+            YOUR BAG ({mounted ? count() : 0})
           </h2>
           <button onClick={closeCart} className="text-dbb-ash hover:text-dbb-cream transition-colors" aria-label="Close cart">
             <X size={22} />
@@ -44,7 +45,8 @@ export function CartDrawer() {
           {list.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
               <p className="font-display text-4xl text-dbb-border tracking-[0.2em] mb-3">EMPTY</p>
-              <p className="font-body text-sm text-dbb-muted">Your bag is empty. Start building.</p>
+              <p className="font-body text-sm text-dbb-muted mb-6">Your bag is empty. Start building.</p>
+              <Link href="/shop" onClick={closeCart} className="btn-outline">SHOP ALL</Link>
             </div>
           ) : (
             <ul className="flex flex-col">
@@ -76,9 +78,13 @@ export function CartDrawer() {
                       <span className="font-body text-sm text-dbb-cream w-4 text-center">{item.quantity}</span>
                       <button
                         onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
-                        className="w-6 h-6 border border-dbb-border text-dbb-cream hover:border-dbb-cream text-sm flex items-center justify-center transition-colors"
+                        disabled={item.quantity >= item.maxQty}
+                        className="w-6 h-6 border border-dbb-border text-dbb-cream hover:border-dbb-cream text-sm flex items-center justify-center transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-dbb-border"
                       >+</button>
                     </div>
+                    {item.quantity >= item.maxQty && (
+                      <p className="font-body text-xs text-dbb-ledger mt-1">Max available in stock</p>
+                    )}
                   </div>
 
                   <button

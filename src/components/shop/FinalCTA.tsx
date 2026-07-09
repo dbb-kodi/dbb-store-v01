@@ -19,7 +19,7 @@ export function FinalCTA() {
 
       <div className="relative z-10 max-w-3xl mx-auto px-6 text-center">
         <p className="section-label justify-center flex">Limited Drops</p>
-        <h2 className="font-display text-[clamp(3rem,8vw,7rem)] leading-[0.92] tracking-[0.02em] text-dbb-cream mb-8">
+        <h2 className="font-display text-display-lg text-dbb-cream mb-8">
           BUILT FOR<br />THE DRIVEN
         </h2>
         <p className="font-body text-base text-dbb-ash mb-10 max-w-md mx-auto leading-relaxed">

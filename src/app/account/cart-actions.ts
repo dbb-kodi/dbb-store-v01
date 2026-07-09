@@ -15,7 +15,11 @@ export async function getSavedCart(): Promise<CartItem[]> {
     .single()
 
   if (error || !data) return []
-  return (data.items as CartItem[]) ?? []
+  const items = (data.items as CartItem[]) ?? []
+  // Carts saved before maxQty existed have no cap on this field. Treat an
+  // absent cap as "unknown, don't clamp" rather than letting it become NaN
+  // the first time addItem/updateQuantity runs Math.min against it.
+  return items.map((item) => ({ ...item, maxQty: item.maxQty ?? Infinity }))
 }
 
 export async function saveCart(items: CartItem[]): Promise<{ error?: string }> {

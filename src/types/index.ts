@@ -43,6 +43,9 @@ export interface CartItem {
   price: number
   quantity: number
   imageUrl: string | null
+  // Stock at the moment this was added — clamps quantity in the cart so the
+  // UI can't build a checkout that's guaranteed to fail server-side.
+  maxQty: number
 }
 
 export interface SiteContent {

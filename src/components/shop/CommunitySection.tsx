@@ -1,10 +1,10 @@
 // src/components/shop/CommunitySection.tsx
 import Link from 'next/link'
 import Image from 'next/image'
-import { COMMUNITY_POSTS } from '@/lib/data/catalog'
+import { fetchCommunityPosts } from '@/lib/data/queries'
 
-export function CommunitySection() {
-  const posts = COMMUNITY_POSTS.slice(0, 6)
+export async function CommunitySection() {
+  const posts = await fetchCommunityPosts(6)
 
   return (
     <section className="py-24 px-6 max-w-7xl mx-auto">

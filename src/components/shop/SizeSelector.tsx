@@ -7,14 +7,19 @@ interface Props {
   variants: Variant[]
   selected: string | null
   onChange: (size: string) => void
+  onSizeGuideClick: () => void
 }
 
-export function SizeSelector({ variants, selected, onChange }: Props) {
+export function SizeSelector({ variants, selected, onChange, onSizeGuideClick }: Props) {
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
         <p className="font-body text-xs tracking-[0.2em] uppercase text-dbb-ash">Size</p>
-        <button className="font-body text-xs tracking-[0.15em] uppercase text-dbb-muted hover:text-dbb-cream underline transition-colors">
+        <button
+          type="button"
+          onClick={onSizeGuideClick}
+          className="font-body text-xs tracking-[0.15em] uppercase text-dbb-muted hover:text-dbb-cream underline transition-colors"
+        >
           Size Guide
         </button>
       </div>
@@ -41,6 +46,18 @@ export function SizeSelector({ variants, selected, onChange }: Props) {
           )
         })}
       </div>
+
+      {(() => {
+        const selectedVariant = variants.find((v) => v.size === selected)
+        if (selectedVariant && selectedVariant.stock_qty > 0 && selectedVariant.stock_qty <= 5) {
+          return (
+            <p className="font-body text-xs text-dbb-ledger mt-3">
+              Only {selectedVariant.stock_qty} left in {selectedVariant.size}
+            </p>
+          )
+        }
+        return null
+      })()}
     </div>
   )
 }

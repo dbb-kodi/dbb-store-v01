@@ -1,10 +1,10 @@
 // src/components/shop/FeaturedProducts.tsx
 import Link from 'next/link'
 import { ProductCard } from './ProductCard'
-import { getFeaturedProducts } from '@/lib/data/catalog'
+import { fetchFeaturedProducts } from '@/lib/data/queries'
 
-export function FeaturedProducts() {
-  const products = getFeaturedProducts()
+export async function FeaturedProducts() {
+  const products = await fetchFeaturedProducts()
 
   return (
     <section className="py-24 px-6 max-w-7xl mx-auto">

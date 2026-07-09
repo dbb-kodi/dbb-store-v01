@@ -3,7 +3,7 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { ShoppingBag, Menu, X } from 'lucide-react'
+import { ShoppingBag, User, Menu, X } from 'lucide-react'
 import { useCart } from '@/lib/store/cart'
 
 const links = [
@@ -48,6 +48,13 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-5">
+          <Link
+            href="/account"
+            className="text-dbb-cream hover:text-dbb-ash transition-colors"
+            aria-label="Account"
+          >
+            <User size={20} />
+          </Link>
           <button
             onClick={openCart}
             className="relative text-dbb-cream hover:text-dbb-ash transition-colors"

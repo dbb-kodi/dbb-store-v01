@@ -7,7 +7,7 @@ export function CategoryGrid() {
   return (
     <section className="py-24 px-6 max-w-7xl mx-auto">
       <p className="section-label text-center">Collections</p>
-      <h2 className="font-display text-[clamp(2.5rem,6vw,5rem)] tracking-[0.04em] text-center text-dbb-cream mb-16">
+      <h2 className="font-display text-display-md text-center text-dbb-cream mb-16">
         SHOP BY CATEGORY
       </h2>
 

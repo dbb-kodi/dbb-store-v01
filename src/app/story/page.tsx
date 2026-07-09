@@ -2,6 +2,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Footer } from '@/components/layout/Footer'
+import { fetchSiteContent } from '@/lib/data/queries'
 // Story hero — black hoodie on rack (Unsplash, free to use)
 const STORY_IMG = 'https://images.unsplash.com/photo-1612978322313-be209301e185?auto=format&fit=crop&w=1920&h=800&q=80'
 
@@ -10,7 +11,10 @@ export const metadata = {
   description: 'The origin of Done Being Broke. A mindset built from struggle and ambition.',
 }
 
-export default function StoryPage() {
+export default async function StoryPage() {
+  const content = await fetchSiteContent()
+  const paragraphs = content.story_body.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean)
+
   return (
     <main className="pt-16">
       {/* Hero */}
@@ -27,8 +31,8 @@ export default function StoryPage() {
         </div>
         <div className="relative z-10 max-w-7xl mx-auto px-6 pb-16">
           <p className="section-label">Who We Are</p>
-          <h1 className="font-display text-[clamp(3rem,8vw,7rem)] leading-[0.92] tracking-[0.02em] text-dbb-cream">
-            THE STORY
+          <h1 className="font-display text-display-lg text-dbb-cream">
+            {content.story_headline}
           </h1>
         </div>
       </section>
@@ -39,15 +43,9 @@ export default function StoryPage() {
           <p className="font-display text-3xl text-dbb-cream">
             &ldquo;Done Being Broke started with a decision — not a dollar.&rdquo;
           </p>
-          <p>
-            DBB was born from a simple but radical idea: that ambition is a lifestyle, not a moment. We were tired of seeing people settle — settle for less than they&apos;re capable of, less than they deserve, less than they&apos;re built for.
-          </p>
-          <p>
-            So we built a brand for the ones who decided enough was enough. The ones grinding before the sun comes up. The ones who see every setback as a setup. DBB is for the movers, the builders, the ones who choose growth every single day.
-          </p>
-          <p>
-            Every piece we release carries that energy. Heavyweight construction. Clean lines. No noise — just purpose.
-          </p>
+          {paragraphs.map((p, i) => (
+            <p key={i}>{p}</p>
+          ))}
           <p className="font-display text-2xl text-dbb-cream">
             More than clothing. It&apos;s a mindset.
           </p>

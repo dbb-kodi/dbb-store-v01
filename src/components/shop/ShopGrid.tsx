@@ -3,16 +3,13 @@
 
 import { useSearchParams } from 'next/navigation'
 import { ProductCard } from './ProductCard'
-import { getAllProducts } from '@/lib/data/catalog'
-import type { Category } from '@/types'
+import type { Category, Product } from '@/types'
 
-export function ShopGrid() {
+export function ShopGrid({ products: all }: { products: Product[] }) {
   const params = useSearchParams()
   const category = params.get('category') as Category | null
 
-  const products = getAllProducts().filter((p) =>
-    category ? p.category === category : true
-  )
+  const products = all.filter((p) => (category ? p.category === category : true))
 
   if (products.length === 0) {
     return (

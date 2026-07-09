@@ -35,7 +35,7 @@ export function ProductCard({ product }: Props) {
         <p className="font-body text-sm text-dbb-cream group-hover:text-dbb-ash transition-colors truncate">
           {product.name}
         </p>
-        <p className="font-display text-xl text-dbb-cream mt-1">
+        <p className="font-display text-xl text-dbb-cream mt-1 ledger-rule inline-block group-hover:[&::after]:border-dbb-credit group-hover:[&::before]:border-dbb-credit">
           ${product.price.toFixed(2)}
         </p>
       </div>

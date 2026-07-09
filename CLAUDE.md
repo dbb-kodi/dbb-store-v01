@@ -2,7 +2,7 @@
 
 ## Project
 
-DBB ("Done Being Broke") — streetwear e-commerce storefront. Next.js 14 App Router, TypeScript, Tailwind. Stripe checkout, Zustand cart, Resend email. Supabase is scaffolded but NOT connected yet.
+DBB ("Done Being Broke") — streetwear e-commerce storefront. Next.js 14 App Router, TypeScript, Tailwind. Stripe checkout, Zustand cart, Resend email. Supabase is wired for auth/DB/storage — schema lives in `supabase/migrations/`, applied via `supabase/APPLY_ALL.sql` (combined, paste into SQL Editor).
 
 ## Commands
 
@@ -12,12 +12,12 @@ DBB ("Done Being Broke") — streetwear e-commerce storefront. Next.js 14 App Ro
 
 ## Architecture
 
-- All product/community data comes from the static mock catalog in `src/lib/data/catalog.ts`. Supabase clients exist in `src/lib/supabase/` but are not wired up — route any new data reads through `catalog.ts` so the later swap to live queries stays in one file.
+- Live data reads go through `src/lib/data/queries.ts` (server-only — uses `next/headers`). Each function tries Supabase first, falls back to the static mock catalog in `src/lib/data/catalog.ts` if the table is empty/unconfigured, so pages never crash without a backend.
 - Shared domain types live in `src/types/index.ts` and are backend-independent; conform to them when adding fields.
-- Cart state is a Zustand store in `src/lib/store/cart.ts`; `CartDrawer` renders from the root layout.
-- Stripe: `src/app/api/stripe/checkout` creates sessions; `src/app/api/stripe/webhook` is deliberately excluded from the middleware matcher — keep it that way.
-- `src/middleware.ts` is a pass-through until Supabase auth is connected; don't add ad-hoc auth checks in pages.
-- Storefront routes under `src/app/*`; admin under `src/app/admin/*` with its own layout and sidebar.
+- Cart state is a Zustand store in `src/lib/store/cart.ts`; `CartDrawer` renders from the root layout. Logged-in carts also sync to the `carts` table via `src/components/CartSync.tsx` + `src/app/account/cart-actions.ts`.
+- Stripe: `src/app/api/stripe/checkout` creates sessions and persists a pending `orders`/`order_items` row; `src/app/api/stripe/webhook` marks orders paid/cancelled and is deliberately excluded from the middleware matcher — keep it that way.
+- `src/middleware.ts` refreshes the Supabase session cookie every request and redirects unauthenticated visitors away from `/admin` and `/account`. Admin role check (`profiles.role === 'admin'`) still happens in `src/app/admin/layout.tsx` via `requireAdmin()` — middleware only gates "logged in or not".
+- Storefront routes under `src/app/*`; admin under `src/app/admin/*` with its own layout and sidebar. Admin writes (products/variants/content) go through server actions in `src/app/admin/*/actions.ts` using `requireAdmin()`.
 
 ## Conventions
 
@@ -27,12 +27,18 @@ DBB ("Done Being Broke") — streetwear e-commerce storefront. Next.js 14 App Ro
 ## Gotchas / Environment
 
 - No tests exist. Verification = `npm run build` passing + manually exercising the affected flow.
-- Env vars required once backends connect: Supabase URL + anon key, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `RESEND_API_KEY`.
+- Env vars: Supabase URL + anon key + service role key are set in `.env` (project ref `cnmlzhefradznbodikwa`). `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET`/`RESEND_API_KEY` still needed for payments/email.
+- Only ever run one Next server at a time. `npm run dev` and `npm run start` write incompatible `.next` layouts to the same folder — leaving one running while rebuilding/starting another causes the live server to 404 on all JS/CSS chunks (page loads as unstyled raw HTML). Kill anything on port 3000 before starting a new server.
 - If a task is interrupted by a usage limit, continue it when the limit resets.
 
-## Advisor Pattern (cost-optimized)
+## Advisor Pattern (always-on)
 
-Default: current (cheap/fast) model executes all work. Escalate to the strong-model `advisor` tool (if available) only for: planning at task start on non-trivial tasks, getting unstuck, and final review before declaring done. Executor does 90%+ of tool calls. If a task needs multi-agent orchestration, delegate token-heavy subtasks to workers with `model: 'sonnet'`. Give serious weight to advisor output.
+For every task, no matter how small — always use both tactics, not gated by task type or perceived triviality:
+
+1. **Advisor:** call the `advisor` tool for every task — at task start (plan/approach) and again before declaring done (review). Not "rare," not scoped to "non-trivial" — every task, every time it's available.
+2. **Subagents:** delegate work out to subagents (`Agent` tool, `model: 'sonnet'` workers, or `Workflow` for multi-step work) rather than doing everything inline on the main thread — regardless of which model is currently executing.
+
+If advisor is unavailable or errors, say so plainly rather than silently proceeding as if the check happened. Give serious weight to advisor output — don't silently override without new evidence.
 
 ## Skills
 

@@ -56,7 +56,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 pt-8 border-t border-dbb-border flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-16 pt-8 border-t-2 border-dbb-ledger flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="font-body text-xs tracking-widest text-dbb-muted uppercase">
             © {new Date().getFullYear()} Done Being Broke
           </p>

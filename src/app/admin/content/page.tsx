@@ -1,22 +1,26 @@
 // src/app/admin/content/page.tsx
 import { ContentEditor } from '@/components/admin/ContentEditor'
+import { fetchSiteContent } from '@/lib/data/queries'
 
-const defaultFields = [
-  { key: 'hero_headline', label: 'Hero Headline', type: 'text', currentValue: 'MORE THAN CLOTHING.' },
-  { key: 'hero_subtext', label: 'Hero Subtext', type: 'text', currentValue: "It's a mindset." },
-  { key: 'ticker_text', label: 'Ticker Text', type: 'text', currentValue: 'DONE BEING BROKE · THE MINDSET IS THE MOVEMENT · BUILT DIFFERENT' },
-  { key: 'story_headline', label: 'Story Headline', type: 'text', currentValue: 'THE STORY' },
-  { key: 'story_body', label: 'Story Body', type: 'textarea', currentValue: 'DBB was born from a simple but radical idea...' },
-  { key: 'message_quote', label: 'Message Section Quote', type: 'textarea', currentValue: 'Done Being Broke is not about money. It\'s about deciding you\'ll never settle again.' },
-  { key: 'instagram_url', label: 'Instagram URL', type: 'text', currentValue: 'https://instagram.com/donebeingbroke' },
+const FIELDS: Array<{ key: string; label: string; type: string }> = [
+  { key: 'hero_headline', label: 'Hero Headline', type: 'text' },
+  { key: 'hero_subtext', label: 'Hero Subtext', type: 'text' },
+  { key: 'ticker_text', label: 'Ticker Text', type: 'text' },
+  { key: 'story_headline', label: 'Story Headline', type: 'text' },
+  { key: 'story_body', label: 'Story Body', type: 'textarea' },
+  { key: 'message_quote', label: 'Message Section Quote', type: 'textarea' },
+  { key: 'instagram_url', label: 'Instagram URL', type: 'text' },
 ]
 
-export default function AdminContentPage() {
+export default async function AdminContentPage() {
+  const content = await fetchSiteContent()
+  const fields = FIELDS.map((f) => ({ ...f, currentValue: content[f.key] ?? '' }))
+
   return (
     <div>
       <p className="section-label">CMS</p>
       <h1 className="font-display text-5xl tracking-[0.04em] text-dbb-cream mb-12">CONTENT</h1>
-      <ContentEditor fields={defaultFields} />
+      <ContentEditor fields={fields} />
     </div>
   )
 }

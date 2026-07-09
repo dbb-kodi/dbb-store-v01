@@ -4,23 +4,19 @@ import Image from 'next/image'
 import { Footer } from '@/components/layout/Footer'
 import { ProductDetail } from '@/components/shop/ProductDetail'
 import { ProductCard } from '@/components/shop/ProductCard'
-import { getProductBySlug, getRelatedProducts, getAllProducts } from '@/lib/data/catalog'
-
-export async function generateStaticParams() {
-  return getAllProducts().map((p) => ({ slug: p.slug }))
-}
+import { fetchProductBySlug, fetchRelatedProducts } from '@/lib/data/queries'
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const product = getProductBySlug(params.slug)
+  const product = await fetchProductBySlug(params.slug)
   if (!product) return {}
   return { title: `${product.name} — DBB`, description: product.description }
 }
 
-export default function ProductPage({ params }: { params: { slug: string } }) {
-  const product = getProductBySlug(params.slug)
+export default async function ProductPage({ params }: { params: { slug: string } }) {
+  const product = await fetchProductBySlug(params.slug)
   if (!product) notFound()
 
-  const related = getRelatedProducts(product.slug, product.category)
+  const related = await fetchRelatedProducts(product.slug, product.category)
 
   return (
     <main className="pt-16">
