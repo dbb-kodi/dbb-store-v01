@@ -10,7 +10,9 @@ interface Props {
 }
 
 export function ProductCard({ product }: Props) {
-  const firstVariant = product.variants[0]
+  const soldOut =
+    product.variants.length > 0 &&
+    product.variants.every((v) => v.stock_qty === 0)
 
   return (
     <Link href={`/shop/${product.slug}`} className="group block">
@@ -22,7 +24,7 @@ export function ProductCard({ product }: Props) {
           className="object-cover transition-transform duration-700 group-hover:scale-105"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
         />
-        {firstVariant?.stock_qty === 0 && (
+        {soldOut && (
           <div className="absolute inset-0 bg-dbb-black/60 flex items-center justify-center">
             <span className="font-display text-lg tracking-[0.3em] text-dbb-muted">SOLD OUT</span>
           </div>
