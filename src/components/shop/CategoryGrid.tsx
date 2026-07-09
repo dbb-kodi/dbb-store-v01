@@ -1,36 +1,50 @@
 // src/components/shop/CategoryGrid.tsx
 import Link from 'next/link'
-import Image from 'next/image'
+import { ArrowRight } from 'lucide-react'
 import { CATEGORIES } from '@/lib/data/catalog'
 
+/**
+ * Four tiles of category photography became four identical empty black
+ * rectangles once the infringing images were pulled — a card grid with nothing
+ * in the cards. Rather than fill them with placeholder art, this is now what a
+ * category index actually is in the brand's own vocabulary: a chart of
+ * accounts. One ruled row per category, the name set large, a dotted leader
+ * carrying the eye to the action.
+ *
+ * It needs no photography, so it doesn't degrade while the shoot is pending,
+ * and it doesn't become dead weight once the photos land either.
+ */
 export function CategoryGrid() {
   return (
-    <section className="py-24 px-6 max-w-7xl mx-auto">
-      <h2 className="font-display text-display-md text-center text-dbb-cream mb-16">
+    <section className="py-24 px-6 max-w-5xl mx-auto">
+      <h2 className="font-display text-display-md text-dbb-cream mb-12">
         SHOP BY CATEGORY
       </h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <ul>
         {CATEGORIES.map((cat) => (
-          <Link
-            key={cat.key}
-            href={`/shop?category=${cat.key}`}
-            className="group relative aspect-[3/4] overflow-hidden bg-dbb-surface"
-          >
-            <Image
-              src={cat.image}
-              alt={cat.label}
-              fill
-              className="object-cover media-zoom opacity-70 group-hover:opacity-90"
-              sizes="(max-width: 640px) 50vw, 25vw"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-dbb-black/80 to-transparent" />
-            <div className="absolute bottom-0 left-0 p-5">
-              <p className="font-display text-2xl tracking-[0.1em] text-dbb-cream">{cat.label.toUpperCase()}</p>
-            </div>
-          </Link>
+          <li key={cat.key}>
+            <Link
+              href={`/shop?category=${cat.key}`}
+              className="group flex items-baseline gap-4 py-6 border-b border-dbb-border transition-colors hover:border-dbb-ledger"
+            >
+              <span className="font-display text-3xl sm:text-5xl tracking-[0.06em] text-dbb-cream shrink-0 transition-colors group-hover:text-dbb-ash">
+                {cat.label.toUpperCase()}
+              </span>
+
+              <span
+                aria-hidden="true"
+                className="flex-1 border-b border-dotted border-dbb-border translate-y-[-6px]"
+              />
+
+              <span className="flex items-center gap-2 font-body text-[11px] tracking-[0.25em] uppercase text-dbb-muted shrink-0 transition-colors group-hover:text-dbb-cream">
+                View
+                <ArrowRight size={14} className="transition-transform duration-200 group-hover:translate-x-1" />
+              </span>
+            </Link>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   )
 }

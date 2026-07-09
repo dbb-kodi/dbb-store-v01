@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { SizeSelector } from './SizeSelector'
 import { AddToCartButton } from './AddToCartButton'
 import { SizeGuideModal } from './SizeGuideModal'
+import { reference } from './UnpostedEntry'
 import type { Product, Variant, Category } from '@/types'
 
 // The products table has no per-item details column, so this was previously a
@@ -66,9 +67,11 @@ export function ProductDetail({ product }: { product: Product }) {
         </ul>
 
         {/* The line reference. Resolves to the exact variant once a size is
-            chosen, the way a ledger entry narrows from account to line. */}
-        <p className="font-body text-[10px] tracking-[0.25em] uppercase text-dbb-border mt-8 tabular-nums">
-          Ref {selectedVariant?.sku ?? `DBB-${product.slug.toUpperCase()}`}
+            chosen, the way a ledger entry narrows from account to line.
+            dbb-muted, not dbb-border: border-grey on black measures 1.46:1 —
+            the reference was shipped invisible. */}
+        <p className="font-body text-[10px] tracking-[0.25em] uppercase text-dbb-muted mt-8 tabular-nums">
+          Ref {selectedVariant?.sku ?? reference(product.slug)}
         </p>
       </div>
 

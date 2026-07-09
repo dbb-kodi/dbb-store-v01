@@ -49,7 +49,7 @@ export default async function CommunityPage() {
           </div>
         ) : (
           <div className="border border-dbb-border bg-dbb-surface px-8 py-24 text-center">
-            <p className="font-display text-4xl tracking-[0.1em] text-dbb-border mb-4">
+            <p className="font-display text-4xl tracking-[0.1em] text-dbb-ash mb-4">
               NO ENTRIES YET
             </p>
             <p className="font-body text-sm text-dbb-muted max-w-md mx-auto leading-relaxed">

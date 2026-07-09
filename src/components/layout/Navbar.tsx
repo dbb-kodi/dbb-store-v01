@@ -30,7 +30,7 @@ export function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-40 transition-colors duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-nav transition-colors duration-300 ${
         scrolled ? 'bg-dbb-black/90 backdrop-blur-md border-b border-dbb-border' : 'bg-transparent'
       }`}
     >
@@ -50,26 +50,29 @@ export function Navbar() {
         <div className="flex items-center gap-5">
           <Link
             href="/account"
-            className="text-dbb-cream hover:text-dbb-ash transition-colors"
+            className="tap-target text-dbb-cream hover:text-dbb-ash transition-colors"
             aria-label="Account"
           >
             <User size={20} />
           </Link>
           <button
             onClick={openCart}
-            className="relative text-dbb-cream hover:text-dbb-ash transition-colors"
-            aria-label="Open cart"
+            className="tap-target text-dbb-cream hover:text-dbb-ash transition-colors"
+            aria-label={itemCount > 0 ? `Open cart, ${itemCount} items` : 'Open cart'}
           >
             <ShoppingBag size={20} />
             {itemCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-dbb-cream text-dbb-black text-[10px] font-semibold w-4 h-4 flex items-center justify-center rounded-full">
+              <span
+                aria-hidden="true"
+                className="absolute -top-2 -right-2 bg-dbb-cream text-dbb-black text-[10px] font-semibold w-4 h-4 flex items-center justify-center rounded-full tabular-nums"
+              >
                 {itemCount}
               </span>
             )}
           </button>
           <button
             onClick={() => setMobileOpen((v) => !v)}
-            className="md:hidden text-dbb-cream"
+            className="tap-target md:hidden text-dbb-cream"
             aria-label="Toggle menu"
           >
             {mobileOpen ? <X size={22} /> : <Menu size={22} />}

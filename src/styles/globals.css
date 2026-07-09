@@ -13,6 +13,11 @@
 
   html {
     scroll-behavior: smooth;
+    /* The cart drawer parks off-canvas at translate-x-full, which extends the
+       scrollable area ~70px to the right on every route. `clip` rather than
+       `hidden`: hidden on <html> creates a scroll container and silently kills
+       position: sticky further down the tree. */
+    overflow-x: clip;
   }
   body {
     @apply bg-dbb-black text-dbb-cream font-body antialiased;
@@ -107,6 +112,22 @@
            hover:text-dbb-cream transition-colors duration-200;
   }
 
+  /* Small icon buttons and quantity steppers measured 20-24px, well under the
+     44px minimum touch target. Grow the hit area with a pseudo-element rather
+     than the box, so the visual size and the surrounding layout are unchanged. */
+  .tap-target {
+    @apply relative;
+  }
+  .tap-target::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 44px;
+    min-height: 44px;
+  }
+
   /* The ledger rule — an accounting subtotal line, thin over thick, in the
      debit red. The one recurring graphic device: hero eyebrow, ticker border,
      product-card price, footer divider. Ships as color + rule only — no third
@@ -130,17 +151,17 @@
      retarget mid-flight instead of restarting from zero. 8px, not 40px —
      the movement should register subconsciously, not announce itself.
 
-     Gated behind .js on <html>: the hidden state only exists once we know
-     JavaScript is running to un-hide it. Without this, a failed or blocked
-     script leaves every section below the fold at opacity 0 forever — the
-     page renders as a hero followed by nothing. Animation is an enhancement;
-     it must never be load-bearing for content. */
-  .js .reveal {
+     The .reveal class is applied by Reveal.tsx only after JS confirms the
+     element is below the fold, and it carries a safety timer. Content is
+     visible by default in every failure mode: no JS, a background tab, a
+     headless renderer, print. Animation is an enhancement, never load-bearing
+     for content. */
+  .reveal {
     opacity: 0;
     transform: translateY(8px);
     transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
   }
-  .js .reveal[data-visible='true'] {
+  .reveal[data-visible='true'] {
     opacity: 1;
     transform: translateY(0);
   }

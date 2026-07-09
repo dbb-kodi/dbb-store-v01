@@ -31,6 +31,12 @@ yarn-error.log*
 next-env.d.ts
 
 # Scratch screenshots from audit agents
+# agent scratch screenshots
 audit*.jpeg
+verify-*.jpeg
+step*-*.jpeg
+phase*-*.jpeg
+real-*.jpeg
+*-check.jpeg
 .auditimg/
 .playwright-mcp/

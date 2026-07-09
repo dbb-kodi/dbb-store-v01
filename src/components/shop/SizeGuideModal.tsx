@@ -53,7 +53,7 @@ export function SizeGuideModal({
       role="dialog"
       aria-modal="true"
       aria-label="Size guide"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-dbb-black/80 px-6 motion-safe:animate-[fade-in_150ms_var(--ease-out)]"
+      className="fixed inset-0 z-modal flex items-center justify-center bg-dbb-black/80 px-6 motion-safe:animate-[fade-in_150ms_var(--ease-out)]"
       onClick={onClose}
     >
       {/* Enters from scale(0.96), never scale(0) — nothing in the real world

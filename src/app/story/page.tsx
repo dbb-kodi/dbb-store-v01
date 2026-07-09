@@ -21,13 +21,7 @@ export default async function StoryPage() {
   return (
     <main className="pt-16">
       {/* Hero */}
-      <section
-        className="relative h-[60vh] flex items-end overflow-hidden bg-dbb-black"
-        style={{
-          backgroundImage:
-            'repeating-linear-gradient(to bottom, transparent 0px, transparent 27px, #0E0E0E 27px, #0E0E0E 28px)',
-        }}
-      >
+      <section className="relative h-[50vh] flex items-end overflow-hidden bg-dbb-black border-b border-dbb-border">
         <div className="relative z-10 max-w-7xl mx-auto px-6 pb-16">
           <p className="section-label ledger-rule inline-block">Who We Are</p>
           <h1 className="font-display text-display-lg text-dbb-cream mt-6">

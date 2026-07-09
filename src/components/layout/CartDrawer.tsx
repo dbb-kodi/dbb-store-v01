@@ -28,7 +28,7 @@ export function CartDrawer() {
       <div
         onClick={closeCart}
         aria-hidden={!isOpen}
-        className={`fixed inset-0 bg-black/70 z-50 backdrop-blur-sm transition-opacity duration-300 ease-out ${
+        className={`fixed inset-0 bg-black/70 z-drawer-backdrop backdrop-blur-sm transition-opacity duration-300 ease-out ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
       />
@@ -37,7 +37,7 @@ export function CartDrawer() {
           stays correct if max-w-md ever changes. Curve is the iOS drawer
           easing — a drawer is an entering surface, so it must not ease-in. */}
       <div
-        className={`fixed top-0 right-0 h-full w-full max-w-md bg-dbb-surface z-50 flex flex-col transform ${
+        className={`fixed top-0 right-0 h-full w-full max-w-md bg-dbb-surface z-drawer flex flex-col transform ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         style={{ transition: 'transform 500ms var(--ease-drawer)' }}
@@ -46,7 +46,7 @@ export function CartDrawer() {
           <h2 className="font-display text-2xl tracking-[0.2em] text-dbb-cream">
             YOUR BAG ({mounted ? count() : 0})
           </h2>
-          <button onClick={closeCart} className="text-dbb-ash hover:text-dbb-cream transition-colors" aria-label="Close cart">
+          <button onClick={closeCart} className="tap-target text-dbb-ash hover:text-dbb-cream transition-colors" aria-label="Close cart">
             <X size={22} />
           </button>
         </div>
@@ -54,7 +54,7 @@ export function CartDrawer() {
         <div className="flex-1 overflow-y-auto px-6 py-4">
           {list.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
-              <p className="font-display text-4xl text-dbb-border tracking-[0.2em] mb-3">EMPTY</p>
+              <p className="font-display text-4xl text-dbb-ash tracking-[0.2em] mb-3">EMPTY</p>
               <p className="font-body text-sm text-dbb-muted mb-6">Your bag is empty. Start building.</p>
               <Link href="/shop" onClick={closeCart} className="btn-outline">SHOP ALL</Link>
             </div>
@@ -83,13 +83,13 @@ export function CartDrawer() {
                     <div className="flex items-center gap-3 mt-2">
                       <button
                         onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
-                        className="w-6 h-6 border border-dbb-border text-dbb-cream hover:border-dbb-cream text-sm flex items-center justify-center transition-colors"
+                        className="tap-target w-6 h-6 border border-dbb-border text-dbb-cream hover:border-dbb-cream text-sm flex items-center justify-center transition-colors"
                       >−</button>
                       <span className="font-body text-sm text-dbb-cream w-4 text-center">{item.quantity}</span>
                       <button
                         onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
                         disabled={item.quantity >= item.maxQty}
-                        className="w-6 h-6 border border-dbb-border text-dbb-cream hover:border-dbb-cream text-sm flex items-center justify-center transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-dbb-border"
+                        className="tap-target w-6 h-6 border border-dbb-border text-dbb-cream hover:border-dbb-cream text-sm flex items-center justify-center transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-dbb-border"
                       >+</button>
                     </div>
                     {item.quantity >= item.maxQty && (
@@ -99,7 +99,7 @@ export function CartDrawer() {
 
                   <button
                     onClick={() => removeItem(item.variantId)}
-                    className="text-dbb-muted hover:text-dbb-cream transition-colors self-start mt-1"
+                    className="tap-target text-dbb-muted hover:text-dbb-cream transition-colors self-start mt-1"
                     aria-label="Remove item"
                   >
                     <Trash2 size={16} />

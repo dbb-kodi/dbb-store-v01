@@ -7,18 +7,14 @@ import Link from 'next/link'
  * deleted from community_posts for that reason. It was still shipping full-bleed
  * on the homepage. Removed.
  *
- * Nothing replaces it. The section is the closing entry of the page, so it gets
- * the same feint ledger rules the unposted product cards use, and nothing else.
+ * Nothing replaces it. Ruled ledger paper was tried here and pulled back out:
+ * on the unposted product card the rules mean something (it is a ledger line);
+ * as a section background they are just stripes. The device is stronger for
+ * living in exactly one place.
  */
 export function FinalCTA() {
   return (
-    <section
-      className="relative overflow-hidden bg-dbb-black py-32"
-      style={{
-        backgroundImage:
-          'repeating-linear-gradient(to bottom, transparent 0px, transparent 27px, #0E0E0E 27px, #0E0E0E 28px)',
-      }}
-    >
+    <section className="relative overflow-hidden bg-dbb-black py-32">
       <div className="relative z-10 max-w-3xl mx-auto px-6 text-center">
         <h2 className="font-display text-display-lg text-dbb-cream mb-8">
           BUILT FOR<br />THE DRIVEN

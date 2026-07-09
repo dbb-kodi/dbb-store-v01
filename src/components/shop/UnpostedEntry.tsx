@@ -19,8 +19,11 @@ import type { Product } from '@/types'
 /**
  * mindset-hoodie -> DBB-MINDSET-HOODIE, but dbb-tee -> DBB-TEE, not DBB-DBB-TEE.
  * Several slugs already carry the brand; prefixing blindly stutters.
+ *
+ * Exported because the PDP renders the same line reference and had its own
+ * copy of the naive version.
  */
-function reference(slug: string) {
+export function reference(slug: string) {
   return `DBB-${slug.replace(/^dbb-/, '').toUpperCase()}`
 }
 

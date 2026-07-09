@@ -40,27 +40,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    // suppressHydrationWarning: the inline script below adds a `js` class to
-    // <html> before React hydrates, so the server-rendered className and the
-    // client's necessarily differ. This is the one legitimate use of the escape
-    // hatch — it is scoped to this element and the divergence is intentional.
-    <html
-      lang="en"
-      className={`${display.variable} ${body.variable}`}
-      suppressHydrationWarning
-    >
-      <head>
-        {/* Marks the document as scripted before first paint, so the scroll
-            reveal's hidden state (.js .reveal) only ever applies when there is
-            JavaScript to reveal it again. Without JS the sections render
-            normally rather than staying at opacity 0 forever. Runs before
-            paint, so there's no flash of unhidden content either. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `document.documentElement.classList.add('js')`,
-          }}
-        />
-      </head>
+    <html lang="en" className={`${display.variable} ${body.variable}`}>
       <body className="bg-dbb-black text-dbb-cream min-h-screen">
         <Navbar />
         <CartDrawer />

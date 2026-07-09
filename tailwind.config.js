@@ -36,6 +36,15 @@ module.exports = {
         display: ['var(--font-display)', 'Impact', 'sans-serif'],
         body: ['var(--font-body)', 'system-ui', 'sans-serif'],
       },
+      // A semantic stack, so the drawer and the modal can't both sit at 50 and
+      // fight. Toast is fixed at 9999 by react-hot-toast; nothing may exceed it.
+      zIndex: {
+        nav: '30',
+        'drawer-backdrop': '40',
+        drawer: '50',
+        'modal-backdrop': '60',
+        modal: '70',
+      },
       fontSize: {
         // clamp(2.5rem,6vw,5rem) was copy-pasted verbatim into 6 different files
         // instead of being a token; this is that token.

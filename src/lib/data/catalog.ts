@@ -97,16 +97,15 @@ export function getRelatedProducts(slug: string, category: Category): Product[] 
   return [...sameCategory, ...rest].slice(0, 4)
 }
 
-// Hoodies / Headwear / Accessories reused the watermarked, KASIDEEP, and CDC
-// biohazard frames respectively — blanked with the rest, and Tees followed in
-// 0009. The placeholder text is empty: CategoryGrid already renders the label
-// over the tile, and a text-bearing placeholder underneath printed every
-// category name twice.
-export const CATEGORIES: Array<{ key: Category; label: string; image: string }> = [
-  { key: 'hoodies',     label: 'Hoodies',     image: img('', 600, 800) },
-  { key: 'tees',        label: 'Tees',        image: img('', 600, 800) },
-  { key: 'headwear',    label: 'Headwear',    image: img('', 600, 800) },
-  { key: 'accessories', label: 'Accessories', image: img('', 600, 800) },
+// No image field: these tiles used the watermarked, KASIDEEP and CDC biohazard
+// frames, and once those were pulled the grid was four empty black rectangles.
+// CategoryGrid renders a typographic index instead, so there is no image to
+// carry — and nothing here degrades while the photography is pending.
+export const CATEGORIES: Array<{ key: Category; label: string }> = [
+  { key: 'hoodies',     label: 'Hoodies' },
+  { key: 'tees',        label: 'Tees' },
+  { key: 'headwear',    label: 'Headwear' },
+  { key: 'accessories', label: 'Accessories' },
 ]
 
 export const COMMUNITY_POSTS: CommunityPost[] = Array.from({ length: 9 }).map((_, i) => ({

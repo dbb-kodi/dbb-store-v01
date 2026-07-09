@@ -49,7 +49,9 @@ export async function CommunitySection() {
         /* An empty screen is an invitation to act, not an apology. Framed as an
            open account: nothing entered yet, and the reader is who enters it. */
         <div className="border border-dbb-border bg-dbb-surface px-8 py-16 text-center">
-          <p className="font-display text-3xl tracking-[0.1em] text-dbb-border mb-4">
+          {/* dbb-ash, not dbb-border. This is the headline of a section with
+              nothing else in it; border-grey on surface measures 1.3:1. */}
+          <p className="font-display text-3xl tracking-[0.1em] text-dbb-ash mb-4">
             NO ENTRIES YET
           </p>
           <p className="font-body text-sm text-dbb-muted max-w-md mx-auto leading-relaxed">

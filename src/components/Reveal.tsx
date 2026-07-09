@@ -3,42 +3,54 @@
 
 import { useEffect, useRef, useState } from 'react'
 
+/** If the observer hasn't fired by now, show the content anyway. */
+const SAFETY_MS = 3000
+
 /**
  * Fades + lifts its children in when they scroll into view, once.
  *
- * IntersectionObserver rather than a scroll listener: the callback fires off
- * the main thread's scroll path, so a slow render never janks the scroll.
- * Disconnects after firing — a section that re-animates every time you scroll
- * past it stops being delight and becomes noise.
+ * Content is visible by default and the hidden state is *armed* by this
+ * component, never assumed. Three ways the reveal can fail to fire, all of
+ * which must still leave the page readable:
  *
- * The animation itself lives in the .reveal class (globals.css) so it runs as
- * a CSS transition off the main thread, and so prefers-reduced-motion can
- * downgrade it to a plain opacity fade in one place.
+ *   1. No JavaScript at all — the `armed` state never applies.
+ *   2. JS runs but the observer never fires: a background tab, a headless
+ *      renderer, a print stylesheet. Hence the safety timer.
+ *   3. The element is already on screen at mount — nothing to reveal, so it
+ *      is never armed in the first place, and there's no flash.
+ *
+ * An animation must never be load-bearing for content.
  */
 export function Reveal({
   children,
-  delay = 0,
   className = '',
 }: {
   children: React.ReactNode
-  /** Stagger offset in ms. Keep under ~80ms between siblings. */
-  delay?: number
   className?: string
 }) {
   const ref = useRef<HTMLDivElement>(null)
+  const [armed, setArmed] = useState(false)
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
     const el = ref.current
     if (!el) return
 
-    // Already in view on mount (above the fold, or a refresh mid-page):
-    // show immediately rather than waiting for a scroll that may never come.
+    // Already in view (above the fold, or a refresh mid-page)? Leave it alone.
+    const rect = el.getBoundingClientRect()
+    if (rect.top < window.innerHeight) return
+
+    setArmed(true)
+
+    const reveal = () => setVisible(true)
+    const timer = window.setTimeout(reveal, SAFETY_MS)
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setVisible(true)
+          reveal()
           observer.disconnect()
+          window.clearTimeout(timer)
         }
       },
       // Fire slightly before the element's top edge clears the viewport bottom,
@@ -47,15 +59,17 @@ export function Reveal({
     )
 
     observer.observe(el)
-    return () => observer.disconnect()
+    return () => {
+      observer.disconnect()
+      window.clearTimeout(timer)
+    }
   }, [])
 
   return (
     <div
       ref={ref}
-      className={`reveal ${className}`}
-      data-visible={visible}
-      style={delay ? { transitionDelay: `${delay}ms` } : undefined}
+      className={`${armed ? 'reveal' : ''} ${className}`}
+      data-visible={armed ? visible : undefined}
     >
       {children}
     </div>
