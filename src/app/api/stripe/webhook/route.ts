@@ -49,7 +49,11 @@ export async function POST(request: NextRequest) {
         if (session.payment_status === 'paid') {
           const supabaseAdmin = createAdminClient()
           if (supabaseAdmin) {
-            const { error: updateError } = await supabaseAdmin
+            // .select() lets us tell a genuine pending->paid transition (rows
+            // returned) apart from a Stripe webhook retry hitting an order
+            // that's already paid (the WHERE clause matches nothing, 0 rows
+            // returned) — stock must only decrement once per order, ever.
+            const { data: updatedOrders, error: updateError } = await supabaseAdmin
               .from('orders')
               .update({
                 status: 'paid',
@@ -59,9 +63,40 @@ export async function POST(request: NextRequest) {
               })
               .eq('id', orderId)
               .eq('status', 'pending')
+              .select('id')
 
             if (updateError) {
               console.error('Order update error:', updateError)
+            } else if (updatedOrders && updatedOrders.length > 0) {
+              const { data: orderItems, error: itemsError } = await supabaseAdmin
+                .from('order_items')
+                .select('variant_id, quantity')
+                .eq('order_id', orderId)
+
+              if (itemsError || !orderItems) {
+                console.error('Could not load order_items for stock decrement:', itemsError)
+              } else {
+                for (const item of orderItems) {
+                  const { data: ok, error: decrementError } = await supabaseAdmin.rpc(
+                    'decrement_variant_stock',
+                    { p_variant_id: item.variant_id, p_qty: item.quantity }
+                  )
+                  if (decrementError) {
+                    console.error(
+                      `Stock decrement RPC error for variant ${item.variant_id} (order ${orderId}):`,
+                      decrementError
+                    )
+                  } else if (!ok) {
+                    // The customer already paid; refusing this doesn't undo the
+                    // charge. Log for manual reconciliation instead of failing
+                    // the webhook, which would just make Stripe retry forever.
+                    console.error(
+                      `Oversold: order ${orderId} paid for ${item.quantity} of variant ${item.variant_id}, ` +
+                        `but stock_qty was insufficient to decrement. Needs manual reconciliation.`
+                    )
+                  }
+                }
+              }
             }
           } else {
             console.error('Supabase admin client not configured; cannot mark order paid.')
